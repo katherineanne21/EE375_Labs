@@ -345,11 +345,37 @@ prod(1:10)		  ## product of values in a vector
 ## ★ Questions (6-9)
 
 6.	**Describe the difference in output between sum and cumsum.**
+
+The sum function returns one value where as the cumsum returns an array of values.
+
 7.	**Generate a sequence of even numbers from -6 to 6**
+
+```{r}
+-6:6
+```
+
 8.	**Generate a sequence of values from -4.8 to -3.43 that is length 8** (show code)
+
+```{r}
+a = seq(from = -4.8, to = -3.43, length.out = 8)
+a
+diff(a)
+sum(a^2)
+```
+
   - a.	What is the difference between values in this sequence?
+
+0.1957143.
+
   - b.	What is the sum of the **exponential** of this sequence?
+  
+137.0746
+
 9.	**Calculate a second difference [a difference of differences] for the sequence 1:10** (show code)
+```{r}
+diff(diff(1:10))
+```
+
 
 ## Help and Documentation
 
