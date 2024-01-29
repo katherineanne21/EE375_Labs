@@ -1,0 +1,571 @@
+---
+title: "Lab 2 - R Primer, part 2"
+author: "GE375"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+    toc_collapsed: false
+---
+
+# Objectives
+
+Today we will continue to learn about more advanced operations in R. This lab picks up from where Lab 1 left off, so you might want to take a quick look at Lab 1 to refresh your memory.
+
+# Assignment 
+
+For this activity you will turn in a Rmd file that contains both code and written answers. 
+
+**Always check that the Rmd file "knits" before submitting!**
+
+# Preparation 
+
+
+It is best to start every lab with a clean environment. In other words, you don't want any variables from previous work to be saved in your environment when starting a new project. This could easily cause confusion and errors in your calculations. 
+
+It is good coding practice to keep your environment as clutter free as possible and to clear it regularly. 
+
+To do this, click on the the broom icon at the top of the Environment pane.
+![](http://test-pecan.bu.edu/shiny/GE375/clean_environment.png){width=50px}
+
+Now that your environment is clean, we will load in the data.
+
+We'll be using the same data that we used in Lab 1. However, it is recommended that you copy the data file in to the same folder as Lab 2. Then we can run the code:
+
+```{r}
+dat = read.table("Lab1_frogs.txt",header=TRUE)
+```
+
+# Combining vectors
+
+Often we’ll need to build up vectors by hand, or combine two or more vectors of data into a new vector. 
+
+There is a simple function `c( )` in R that “combines” vectors or numbers into a single vector. You use it like this:
+ 
+```{r}
+x <- c(1,7)
+x
+y <- c(10:15,3,9)
+y
+c(x,y)
+```
+
+Vectors can also be used for indexing other vectors. For example:
+ 
+```{r}
+y[x]  		## return the 1st and 7th element of y
+```
+ 
+We can also combine vectors to build up data frames by “binding” them together either are rows or as columns
+
+```{r}
+p <- 1:10
+q <- 10:1
+cbind(p,q)  	# bind as columns
+rbind(q,p)		# bind as rows
+```
+
+`cbind` and `rbind` can also be applied to existing data frames, for example to add another column to an existing data frame or to take two data sets with the same columns and bind them together by row to make a larger data set.
+
+   
+## ★ Questions (1-2)
+
+1.	**Create a character vector that contains the names of 4 people you admire.**
+2.	**Show just the odd numbered rows in the frog data. Write this code for the GENERAL CASE -- don’t just type c(1,3,5,…) but use functions that you learned in previous sections to set up the sequence.**
+
+
+# Logical operators and indexing
+
+## Logical operators
+
+R can perform standard logical comparisons, which can be very useful for comparing and selecting data. It's important to know the syntax for the different logical operators, some of which are odd:
+
+```
+>	  # greater than
+<	  # less than
+>=	# greater than or equal to
+<=	# less than or equal to
+==	# equal to (TWO equals signs...you were very close!)
+!=	# not equal
+```
+		
+As a simple example you could compare individual numbers:
+ 
+```{r}
+1 > 3
+5 < 7
+4 >= 4
+-11 <= pi
+log(1) == 0
+exp(0) != 1
+```
+
+You can also combine multiple logical operators using the symbols for ‘and’ (`&`) and ‘or’ (`|`)
+
+```{r}
+w <- 4
+w > 0 & w < 10
+w < 0 | w > 10
+```
+
+You can also apply logical operators to vectors and matrices. When you type a "logical" expression like `y > x` in R you get a `TRUE`/`FALSE` answer of the same shape as the inputs. e.g.:
+
+```{r}
+z <- y > 13
+z
+```
+
+You will notice that by default logical operations are performed element-by-element. If you want to apply a logical test to a whole vector at a time you can use the function `any` to test if any of the values are true and `all` to test if all values are true
+
+```{r}
+any(y > 13) # At least one of the values of y is larger than 13 so this will be TRUE
+all(y > 13) # All of the values of y are not larger than 13 so this will be FALSE
+```
+
+Note that when your data is characters you'll need double-quotes in your comparison. e.g. 
+
+```{r}
+a <- c("north","south","east","west")
+a == "east"
+```
+
+
+## Logical vectors
+
+A "logical vector" (i.e. a vector made up of logical values) can be a particularly useful tool. 
+
+Take for example the logical vector that we created earlier:
+
+```{r}
+y
+y > 13
+```
+
+For each value of `y`, we are checking if it is larger than 13.
+
+But which values in `y` are larger than 13?
+
+By looking at the vector `y` we can see that the fifth and sixth values in the vector are 14 and 15 and so the fifth and sixth values in the resuting logical vector are `TRUE` and the other values are `FALSE`. But if `y` were much longer, it would **not** be reasonable to look at it to find the answer.  
+
+Instead we can use the function `which` for this very purpose: the `which` function returns the indices of the `TRUE` values in a logical vector. 
+
+```{r}
+which(y > 13)
+# The fifth and sixth values of y are larger than 13
+```
+
+You can also sometimes treat `TRUE` and `FALSE` just like 1 and 0, which can be very useful. If you want to count the number of values in `y` that are larger than 13, you can use the `sum` function:
+
+
+```{r}
+sum(y > 13) # two elements of y are > 13
+```
+
+Logicals don't always work exactly like 0 and 1 in some situations, so be careful. You can always convert them explicitly with `as.numeric` if need be:
+ 
+```{r}
+y > 13 #find the logical vector
+as.numeric(y > 13) #covert the logical vector to 1s and 0s
+sum(as.numeric(y > 13)) #sum to find the number of values in y that are > 13
+```
+
+## Subsetting using logical vectors
+
+You also need to know that logical vectors can be used as indices for other vectors of the same length. Commonly, you'll use them as indices to one of the vectors that produced them.
+
+For example, if we want to know the actual values in `y` that are larger than 13
+
+```{r}
+z <- y > 13 # create a logical vector 
+
+y[z] # use the logical vector to select the elements in y that are larger than 13
+```
+
+Or, skipping the middleman `z`:
+
+```{r}
+y[y > 13]
+```
+
+These simple comparisons can provide a powerful means for subsetting data. These comparisons can also be used in matrices and data frames the same way we were using sequences of row or column numbers above. For example, if you just wanted the rows where there were 3 or more frogs, you could type  
+
+```{r}
+# select the rows of dat for which frogs are larger than or equal to 3
+# select all the columns
+dat[dat$frogs >= 3,] 
+```
+
+## The subset function
+
+R also has a built in function `subset` for doing this sort of subsetting that takes the data set as the first argument and the condition used for subsetting as the second argument. So the above could also be rewritten as
+ 
+```{r}
+# select the rows of dat for which frogs are larger than or equal to 3
+# select all the columns
+subset(dat, frogs >= 3)
+```
+
+`subset` also has an optional 3rd argument for just selecting specific columns. So if you wanted to run the previous subset but only needed the columns tadpoles and spots you could run
+
+```{r}
+# select the rows of dat for which frogs are larger than or equal to 3
+# select the columns tadpoles and spots
+subset(dat, frogs >= 3, select = c("tadpoles","spots"))
+```
+
+## ★ Questions (3)
+3.	**For the frog data set:** 
+*  a.	display just the rows where frogs have spots
+*  b.	display just the rows where frogs are blue
+*  c.	how many blue tadpoles are there?
+*  d.	create a new object containing just the rows where there are between 3 and 5 tadpoles
+*  e.	display just the rows where there are less than 2.5 red frogs
+*  f.	display where either frogs do not have spots or there are more than 5 frogs
+
+# Plots, tables, and exploratory analysis
+
+## Tables
+
+Often understanding our data requires more than just being able to subset the raw data, but also the ability to summarize and visualize data. The **table** command can do basic tabulation and cross tabulation of data
+
+```{r}
+table(dat$color)
+table(dat$color,dat$spots)
+```
+
+There are also a number of commands for calculating basic statistical measures
+
+```{r}
+mean(dat$frogs)
+median(dat$tadpoles)
+var(dat$frogs)  			## variance
+sd(dat$frogs)				## standard deviation
+cov(dat$frogs,dat$tadpoles)		## covariance
+cor(dat$frogs,dat$tadpoles)		## correllation
+quantile(dat$tadpoles,c(0.05,0.95))		## 5% and 95% quantiles
+min(dat$frogs)				## smallest value
+max(dat$frogs)				## largest value
+```
+
+
+## Apply
+
+R also has a set of apply functions for applying any function to sets of values within a data structure.
+
+The function `apply` will apply a function to either every row (dimension 1) or every column (dimension 2) of a matrix or data.frame. In this example the commands apply the `sum` function to the first two columns of the data (frogs & tadpoles) first calculated by row (the total number of individuals in each population) and second by column (the total number of frogs and tadpoles)
+
+![](http://test-pecan.bu.edu/shiny/GE375/apply_1.png){width=600px}
+
+```{r}
+# calculate sum of frogs & tadpoles by row (1st dimension)
+apply(dat[1:5,1:2], MARGIN = 1, FUN = sum)  
+```
+![](http://test-pecan.bu.edu/shiny/GE375/apply_2.png){width=600px}
+
+```{r}
+# calculate sum of frogs & tadpoles by column (2nd dimension)
+apply(dat[1:5,1:2], MARGIN = 2, FUN = sum)  
+```
+
+The function `tapply` will apply a function to an R data object, grouping data according to a second variable or set of variables. The first example applies the `mean` function to frogs grouping them by color. The second shows that `tapply` can be used to apply a function over multiple groups, in this case color and spots. 
+
+```{r}
+# calculate mean of frogs by color
+tapply(dat$frogs, INDEX = dat$color, FUN = mean)  
+```
+
+
+![](http://test-pecan.bu.edu/shiny/GE375/tapply.png){width=200px}
+
+```{r}
+# calculate mean of frogs by color & spots
+tapply(dat$frogs, INDEX =  dat[,c("color","spots")], FUN = mean)
+```
+
+
+## Plotting
+
+There are a lot of options for plotting data in R.  The simplest of these include
+
+```{r}
+plot(dat$frogs, dat$tadpoles)  ## x-y scatter plot
+abline(a=0,b=1)	## add a 1:1 line (intercept=0, slope=1)
+
+hist(dat$tadpoles) ## histogram
+abline(v = mean(dat$tadpoles)) ## add a vertical line at the mean
+
+pairs(dat[,1:2]) ## all pairwise scatter plots
+
+barplot(tapply(dat$frogs,dat$color,mean)) ## barplot of mean frogs by color
+abline(h=3) ## add a horizontal line at 3
+```
+
+The functions `lines` and `points` are also frequently used to add additional lines and points (respectively) to an existing plot.  There are a multitude of optional arguements to plotting functions that can be used to control all aspects of the plot aesthetics -- you'll end up learning most of these through examples used in future labs. For example, if I wanted to add the color and spot data to the previous scatterplot I could do that as:
+
+```{r}
+# Note: This is the code you will edit for question 10
+
+plot(dat$frogs,dat$tadpoles,
+     cex = 1.5,    		# increase the symbol size
+     col = as.character(dat$color),	# change the symbol color by name
+     pch = dat$spots + 1,			# change the symbol (by number)
+     cex.axis = 1.3,			# increase the font size on the axis 
+     xlab = "Frog Density",		# label the x axis
+     ylab = "Tadpole Density",		# label the y axis
+     cex.lab = 1.3,			# increase the axis label font size
+     main = "Frog Reproductive Effort", # title
+     cex.main = 2			# increase title font size
+     )
+legend("topleft",
+       c("Red no spot","Blue no spot","Red spots","Blue Spots"),
+       pch = c(1,1,2,2),
+       col = c("red","blue","red","blue"), cex = 1.3
+       )
+
+```
+
+
+Within the Plot window, graphs can be cut-and-pasted into other documents or saved to file fairly simply by using Export. If you want to automate the process of exporting graphics, for example when you generate a whole bunch of figures at once and don’t want to Export each one by hand, you'll want to use the graphical functions such as 'postscript', 'pdf', or 'tiff'. For all of these plot functions there are numerous additional (optional) arguments that control the formatting of the plots. The help for `par` (i.e. `?par`) gives a fairly detailed list of these options, some of which you will see in further examples below.
+
+
+## ★ Questions (4-8)
+4.	**Plot the following lines from 0 to 3 (hint: define x as a sequence with a step size smaller than 1). Make sure to make the resolution of x sufficiently small to see the curves**
+*   a.	ln(x)
+*   b.  e^{-x}
+5. **Make a barplot of the mean number of frogs**
+6. **Make a barplot of the median number of frogs grouped by whether they have spots or not.**
+7. **Plot a histogram of blue frogs**
+8. **Use apply to calculate the across-population standard deviations in the numbers of frogs and tadpoles**
+
+
+# IF statements
+
+Logical operators are not just used for subsetting data, but can be used to control the flow of an analysis and make decisions. The idea is that we want to tell the computer a set of rules, such as “if X happens, then do Y, otherwise do Z”.  The syntax for this in R is 
+
+```
+if(condition){
+  ## Do Y
+} else {
+	## Do Z
+}
+```
+
+The “condition” part of this syntax is always a logical comparison, which does the first part (Y) if the condition is `TRUE` and the second part if it is `FALSE`. 
+
+It should also be noted that the `else{ }` part of the syntax is optional, which would correspond to telling the computer, “if X is true, do Y, otherwise just keep going”. 
+
+For example, if we wanted to do integer division on integers but normal division otherwise we could write 
+
+```{r}
+if(is.integer(x) & is.integer(y)){
+  z <- x %/% y 	## Do integer division
+} else {
+	z <- x/y       ## Do normal division
+}
+
+z
+```
+
+
+It is also possible to string together multiple if statements sequentially to deal with multiple possible cases and outcomes. 
+
+When there are more than one condition, the first condition is still denoted with `if()` but the following conditions are denoted with `else if()`. You can chain together as many `else if()` statements as you want. The syntax will look like this:
+
+```
+if(condition 1){
+  ## Do A
+} else if(condition 2){
+	## Do B
+} else if(condition 3){
+	## Do C
+	## ... continue to add conditions
+} else {
+  ## Do Z
+}
+```
+
+Looking back at our previous example, we might want the above code to give us a warning if we try to do division on non-numeric data rather than failing with an error. We achieve this by adding in an `else if` statement. 
+
+```{r}
+if(!is.numeric(x) | !is.numeric(y)){
+  warning("Cannot perform division on non-numeric data")
+}else if(is.integer(x) & is.integer(y)){
+	z <- x %/% y 	## Do integer division
+} else {
+	z <- x/y       ## Do normal division
+}
+z
+```
+
+For cases where the outcomes are simple, or when we want to apply an `if` to every element in a vector, then the `ifelse` function can be an efficient alternative. `ifelse` takes three arguments, the condition, what to do if its true, and what to do if its false. 
+
+Below are two examples: 
+
+```{r}
+
+# Here we check if the frog data is larger than 2
+# If the data is larger than 2, return "larger", 
+# If the data is smaller than 2, return "smaller"
+ifelse(test = dat$frogs > 2, yes = "larger", no = "smaller")
+
+
+# Here we check the sign on the frog data before taking the log. 
+# If the data is larger than 0, return the log of the data
+# If the data is smaller than 0, return the log of -1 * the data 
+ifelse(test = dat$frogs > 0, yes = log(dat$frogs), no = log(-dat$frogs))
+
+
+```
+
+Aside: As is very common in R, as we learn more we often find more efficient ways of solving problems . For example, `ifelse(test = dat$frogs > 0, yes = log(dat$frogs), no = log(-dat$frogs))` is equivalent to `log(abs(dat$frogs))`
+
+## ★ Questions (9)
+
+9. **Write an if statement that makes a scatter plot of x if all the values are positive, and plots a histogram otherwise. Assume x is a vector of integers between 2 and 9**
+
+
+# Defining custom functions
+
+One of the powerful things about computer languages is that they allow us to encapsulate repetitive tasks into functions, making it easier to abstract a problem. In R you are not limited to the pre-defined functions but you can define your own functions as well. For example, if we found that we were repeating the previous block of ‘if’ code multiple places in our code, we might want to convert it to a function so that we could save on retyping the code again and again. Putting the code in one place also means that if we change the code we only need to change it once and it applies everywhere. At the extreme, its often argued that anything you do more than once in a piece of code should be converted to a function.  So how do we define a function in R?  
+
+```
+name = function(arguments){
+  # do some calculations
+	return(z)
+}
+```
+
+We need to give it a name, for example we could call the previous if statement ‘my.division’, and we need to define the arguments to the function. We also need to be explicit in defining what data we want the function to return, since in many cases the outside user doesn’t need to know everything that goes on inside the function but is only interested in the result. Putting these together would give us the following
+
+```{r}
+my.division <- function(x,y){
+  if(!is.numeric(x) | !is.numeric(y)){
+		warning("Cannot perform division on non-numeric data")
+	}else if(is.integer(x) & is.integer(y)){
+	z <- x %/% y 	## Do Integer division
+} else {
+	z <- x/y       ## Do normal division
+}
+	return(z)
+}
+
+my.division(x,y)
+my.division(y,x)
+my.division(x,"5")
+```
+
+ 
+## ★ Questions (10)
+10.	**Convert the more complicated graphing example at the end of the plotting section into a function that only takes a data frame as an argument. Next, call the function passing it just the subset of data where there are 5 or more tadpoles.**
+
+# For loops
+
+Another powerful aspect of computers is their ability to easily repeat the same task time and time again. In fact, one of the major reasons many people learn to code is that they’ve figured out how to do some analysis once, but they want to apply the same analysis hundreds or thousands of times to different data sets, sites, individuals, pictures, etc. Doing so by clicking through a typical graphical user interface thousands of times if at best mind-numbing, if not outright impossible. Loops allow us to easily repeat an analysis over and over. The most common type of loop we will encounter is the for loop, which will repeat a chunk of code one time for each values specified by some sequence
+ 
+```
+for( variable in sequence){
+  ## do something
+}
+```
+
+As a very simple example, we might want to print the numbers 1:10
+
+```{r}
+for(i in 1:10){
+  print(i)
+}
+```
+
+A more complicated, but common, example might be to loop over all rows in a data set, or to loop over all files in a directory. 
+
+## ★ Questions (11)
+
+11.	**Starting with a vector x = 1:10, write a for loop that adds 5 to each value in the vector. Note that it is permissible to assign an element in a vector to itself (e.g. `x[i] = x[i] + 5`)**
+
+
+# Vector and Matrix Math
+
+While loops are a powerful tool, there are many places where a calculation we want to perform can be done so directly on a vector or a matrix as a whole rather than having to loop through each value. For example, in the previous question we had a vector x = 1:10 and we wanted to add 5 to every value. We could have done this more simply as
+ 
+```{r}
+x + 5
+```
+
+which adds 5 to each element. We can also multiply, divide, and subtract with vectors, and the operations are applied to each element
+
+```{r}
+5*x
+x/5
+x-5
+```
+
+Furthermore, if we have two or more vectors, and we perform mathematical operations on them, the operations are performed element by element
+
+```{r}
+y <- 10:1
+x*y
+x-y
+x/y
+dat$frogs + dat$tadpoles
+```
+
+R also allows us to define matrices and perform element-wise math on them as well
+
+```{r}
+z <- matrix(1:25,5,5)
+z
+z + 5
+z*5
+z - 1:5
+```
+
+The last example shows that we can also perform element-wise math between a matrix and a vector. Similarly, matrix-to-matrix math is also allowed, though for these cases you need to pay a lot of attention to the dimensions of the matrices and the order that vectors are being applied.
+	In addition to element-wise math, R can also perform standard matrix math. If you have not seen this math before you don’t need to worry about what it is doing at this point, any matrix operations will be explained on a case-by-case later in the semester.
+ 
+```{r}
+t(z)  		## transpose
+diag(z)			## diagonal of an existing matrix
+diag(1,5)   ## create a diagonal matrix
+w <- z + diag(1,5) ## matrix addition
+w
+solve(w)		## inversion
+crossprod(z,z)		## cross product
+z %*% z 		## matrix multiplication
+```
+
+# Not covered…
+
+While this summary is really just the tip of the iceberg relative to the full depth of available functions and packages in R, there are a few major topics that will be introduced in later exercises but which you would be encouraged to look ahead to. These include how R treats probability distributions and random numbers, missing values (NA), and a very flexible data structure called a list. As the course progresses you will also be exposed to more examples of R code, the structure of R packages, command line execution, how to read a write a larger suite of data types, and how R interfaces with a few other software systems.
+
+# Synopsis
+
+Most of this document is meant to familiarize you with R, so that when you encounter a problem you need to solve you will have a vague memory of something that might work and can use this as a reference. Over time you will come to memorize a larger fraction of this and through exploration you will find many additional functions and coding techniques that are useful. However, here are some parting thoughts on what you should take home at the end of the day.
+
+If you have never programmed before:
+
+*	Focus first on the core concepts that define almost all programming languages
+ + Mathematical operators
+ + Logical operators
+ + Indexing of vectors, matrices, and data frames
+ + If statements
+ + For loops
+ + Functions
+*	Programming, at its essence, is a process of breaking down a complicated problem into a series of very simple steps, and then translating those steps into a symbolic language (code). This document is mostly about the vocabulary and syntax of one such language (R), the fun and creative process of using this language for problem solving will come through examples and experience.
+
+If you know another language and are picking up R:
+
+*	The hardest transition will be SYNTAX
+
+Everyone:
+
+*	Save code early and often
+  + Even better is to commit your code in a version control system like git
+  + Commit code frequently, typically one new feature per commit
+*	Keep code well documented
+*	Use meaningful variable names
+*	Develop a habit of actively searching and exploring R. 
+ +	Read the help documents for a function
+ +	Search for new functions and techniques
+ +	Scour the web when debugging. 
+* The key to good programming is being able to teach yourself

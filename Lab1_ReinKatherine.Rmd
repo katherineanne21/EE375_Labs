@@ -274,6 +274,7 @@ log(1/5)
    NaN
    
 2.	**Why are we multiplying the results of the atan and atan2 functions by 180/pi?**
+This will change the answer from radians to degrees.
 
 3.	**What is the difference between log and log10?**  (Hint: use help!)
     log is log base e and log10 is log base 10.
@@ -351,7 +352,7 @@ The sum function returns one value where as the cumsum returns an array of value
 7.	**Generate a sequence of even numbers from -6 to 6**
 
 ```{r}
--6:6
+seq(from = -6, to = 6, by = 2)
 ```
 
 8.	**Generate a sequence of values from -4.8 to -3.43 that is length 8** (show code)
@@ -485,7 +486,7 @@ Lets begin by opening the "Lab1_frogs.txt" file in the "data" folder. This data 
 
 Run the code below and then check for the dat variable in the Environment! Has it appeared?
 ```{r}
-dat <- read.table(file = "Lab1_frogs.txt", header = TRUE)
+dat <- read.table(file = "Lab1_frogs", header = TRUE)
 ```
 
 The second argument `header=TRUE` informs R that your data file has column headers that should be read rather than treated as just another line of data.  For the above command to work **R has to be looking at the correct folder**.  You can find out what folder R is currently looking at (its "working directory") using `getwd()` and you can change that directory using `setwd()` or under **Session > Set Working Directory**.  
@@ -538,10 +539,18 @@ Finally, while we won't use these explicitly in this class, there are a large nu
 10. Use R commands (e.g., do not click "import dataset" and use the dialog there) to do the following.
    - a. Write the frog data file delimited in a pipe-delimited format (i.e. separated by ` '|' `). Open the file up in a text editor and cut-and-paste the first few lines of the file into your RMD file (just so I can see what you did).  
    - b. Read this newly-created data into R as `dat2` (`dat2` should be identical to `dat`).
-   
+
+```{r}
+dat2 = read.table(file = "Lab1_frogs", header = TRUE)
+```
+
 Tip for 10a: paste the 3 lines from the new file between three tick marks, the knitted document will look much better.
 ```
-# paste 3 lines here 
+# paste 3 lines here
+"frogs" "tadpoles" "color" "spots"
+1.1 2.03698175474231 "red" TRUE
+1.3 2.87623092770957 "red" FALSE
+1.7 3.06252807802208 "red" TRUE
 ```
 
 ## Data Exploration
@@ -625,6 +634,11 @@ In general, it is better to **access data by name**, rather than using the row a
 
 11. **What is median number of frogs? The maximum number of tadpoles?**
 
+```{r}
+median(dat$frogs)
+max(dat$tadpoles)
+```
+
 ## Converting Data
 
 Finally, there are functions for converting data from one data type to another
@@ -638,8 +652,22 @@ as.matrix(dat)
 
 ## ★ Questions (12-14)
 12. **Show just the spots data as characters**
+
+```{r}
+as.character(dat$spots)
+```
+
 13. **Show the 3rd through 8th rows of the 1st though 3rd columns**
+
+```{r}
+dat[3:8,1:3]
+```
+
 14. **Show the first 3 rows**
+
+```{r}
+dat[1:3,]
+```
 
 
 
