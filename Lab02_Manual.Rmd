@@ -570,7 +570,9 @@ graphing = function(dat){
        )
 }
 
-graphing(dat)
+tadpole = dat[dat$tadpoles >= 5, ]
+
+graphing(tadpole)
 
 ```
 
