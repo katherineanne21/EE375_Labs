@@ -186,9 +186,6 @@ pop_size_MGR <- function(r,K){
 }
 
 # Set initial conditions
-r = 0.3
-N_initial = 2
-NT = 52
 K = 250
 
 # Call function
