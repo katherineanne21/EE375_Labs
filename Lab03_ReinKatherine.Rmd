@@ -88,3 +88,40 @@ plot(0:NT, N_con, type = 'l', main = "Exponential Growth Functions", xlab = "Tim
 lines(0:NT, N_dis, type = 'l', main = "Exponential Growth Functions", xlab = "Time", ylab = "Population Size", col = "Red", lty = 4, lwd = 2)
 legend("topleft", legend = c("Continuous","Discrete"), col = c("DarkBlue","Red"), lty = c(1,4), lwd = c(2,2))
 ```
+
+## A5 - Sensitivity Analysis
+
+```{r}
+# Initial Conditions
+i = 20
+NT = 10
+r = runif(i, -1, 1)
+N_initial = sample(1:100, i, replace = TRUE)
+
+# Create Vectors
+N_ten = rep(0,NT)
+r_ten = rep(0,NT)
+N_initial_ten = rep(0,NT)
+
+# Find the 10th value for each set of conditions
+for(x in 0:i){
+  N = con_exp_growth(N_initial[x], r[x], NT)
+  N_ten[x] = N[10]
+  r_ten[x] = r[x]
+  N_initial_ten = N_initial[x]
+}
+
+# Log Data
+log_N_ten = log10(N_ten)
+
+# Plot Data
+plot(r_ten, log_N_ten, type = 'p', xlim = range(r_ten), ylim = range(log_N_ten), main = "Sensitivity of r", xlab = "r", ylab = "Population Size", col = "DarkBlue", lwd = 1)
+
+plot(N_initial_ten, log_N_ten, type = 'p', xlim = range(N_initial_ten), ylim = range(log_N_ten), main = "Sensitivity of Initial Population Size", xlab = "Initial Population Size", ylab = "Population Size", col = "DarkBlue", lwd = 1)
+
+```
+
+## B1 - Discrete Logistic Growth
+
+
+
