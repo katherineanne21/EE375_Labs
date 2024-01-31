@@ -11,16 +11,44 @@ knitr::opts_chunk$set(echo = TRUE)
 ## A1 - Continuous Growth (10 weeks)
 
 ```{r}
+# Define a continuous exponential growth function
 con_exp_growth <- function(N_initial, r, NT){
   t_cont = 0:NT
   N = N_initial * exp(r*t_cont)
   return(N)
 }
 
+# Set initial conditions
 r = 0.4
 N_initial = 38
+NT = 10
 
-N= con_exp_growth()
-
-
+# Call function and graph
+N = con_exp_growth(N_initial, r, NT)
+plot(0:NT, N, type = 'l', main = "Continuous Exponential Growth Function", xlab = "Time", ylab = "Population Size", col = "DarkBlue")
 ```
+
+## A2 - Discrete Growth
+
+```{r}
+# Define a discrete exponential growth function
+dis_exp_growth <- function(N_initial, r, NT){
+  R = exp(r)
+  t_dis = 0:NT
+  N = rep(N_initial,NT+1)
+  for(t in 1:NT){
+    N[t+1] = R*N[t]
+  }
+  return(N)
+}
+
+# Set initial conditions
+r = 0.4
+N_initial = 38
+NT = 10
+
+# Call function and graph
+N = dis_exp_growth(N_initial, r, NT)
+plot(0:NT, N, type = 'l', main = "Discrete Exponential Growth Function", xlab = "Time", ylab = "Population Size", col = "DarkBlue")
+```
+
