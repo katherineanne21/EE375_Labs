@@ -123,5 +123,80 @@ plot(N_initial_ten, log_N_ten, type = 'p', xlim = range(N_initial_ten), ylim = r
 
 ## B1 - Discrete Logistic Growth
 
+```{r}
+# Define a discrete logistic growth function
+dis_log_growth <- function(N_initial, r, NT, K){
+  t_dis = 0:NT
+  N = rep(N_initial,NT+1)
+  
+  for(t in 1:(NT-1)){
+    N[t+1] = N[t] + r*N[t]*(1-N[t]/K)
+  }
+  return(N)
+}
 
+# Set initial conditions
+r = 0.3
+N_initial = 2
+NT = 52
+K = 250
+
+# Call function and graph
+N = dis_log_growth(N_initial, r, NT, K)
+plot(0:NT, N, type = 'l', main = "Discrete Logistic Growth Function", xlab = "Time", ylab = "Population Size", col = "DarkBlue")
+```
+
+## B2 - Carrying Capacity
+
+```{r}
+# Define a function to break once K is surpassed
+find_K <- function(N,K){
+  K = K-0.5
+  
+  for(x in 1:length(N)){
+    if(N[x]>K){
+      return(x)
+    }
+  }
+}
+
+# Set initial conditions
+r = 0.3
+N_initial = 2
+NT = 52
+K = 250
+
+# Call function
+N = dis_log_growth(N_initial, r, NT, K)
+weeks_K = find_K(N,K)
+weeks_K
+```
+
+## B3 - Max Growth Rate/Population
+
+```{r}
+# Define a function to find the Max Growth Rate
+max_growth_rate <- function(K){
+  return(K/2)
+}
+
+# Define a function to find the Population Size at MGR
+pop_size_MGR <- function(r,K){
+  return((r*K)/4)
+}
+
+# Set initial conditions
+r = 0.3
+N_initial = 2
+NT = 52
+K = 250
+
+# Call function
+MGR = max_growth_rate(K)
+MGR
+
+pop_size = pop_size_MGR(MGR,K)
+pop_size
+
+```
 
