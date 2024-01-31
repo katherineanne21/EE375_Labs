@@ -11,5 +11,16 @@ knitr::opts_chunk$set(echo = TRUE)
 ## A1 - Continuous Growth (10 weeks)
 
 ```{r}
+con_exp_growth <- function(N_initial, r, NT){
+  t_cont = 0:NT
+  N = N_initial * exp(r*t_cont)
+  return(N)
+}
+
+r = 0.4
+N_initial = 38
+
+N= con_exp_growth()
+
 
 ```
