@@ -50,7 +50,7 @@ NT = 10
 
 # Call function and graph
 N = dis_exp_growth(N_initial, r, NT)
-plot(0:NT, N, type = 'l', main = "Discrete Exponential Growth Function", xlab = "Time", ylab = "Population Size", col = "DarkBlue")
+plot(0:NT, N, type = 'p', main = "Discrete Exponential Growth Function", xlab = "Time", ylab = "Population Size", col = "DarkBlue", pch = 16)
 ```
 
 ## A3 - Doubling Time
@@ -111,14 +111,10 @@ for(x in 0:i){
   N_initial_ten[x] = N_initial[x]
 }
 
-# Log Data
-log_N_ten = log10(N_ten)
-
 # Plot Data
-plot(r_ten, log_N_ten, type = 'p', xlim = range(r_ten), ylim = range(log_N_ten), main = "Sensitivity of r", xlab = "r", ylab = "Log of Population Size", col = "DarkBlue", lwd = 1, cex = 0.75)
+plot(r_ten, N_ten, log = "y", type = 'p', xlim = range(r_ten), ylim = range(N_ten), main = "Sensitivity of r", xlab = "r", ylab = "Log of Population Size", col = "DarkBlue", lwd = 1, cex = 0.75)
 
-plot(N_initial_ten, log_N_ten, type = 'p', xlim = range(N_initial_ten), ylim = range(log_N_ten), main = "Sensitivity of Initial Population Size", xlab = "Initial Population Size", ylab = "Log of Population Size", col = "DarkBlue", lwd = 1, cex = 0.75)
-
+plot(N_initial_ten, N_ten, log = "y", type = 'p', xlim = range(N_initial_ten), ylim = range(N_ten), main = "Sensitivity of Initial Population Size", xlab = "Initial Population Size", ylab = "Log of Population Size", col = "DarkBlue", lwd = 1, cex = 0.75)
 ```
 
 ## B1 - Discrete Logistic Growth
@@ -129,7 +125,7 @@ dis_log_growth <- function(N_initial, r, NT, K){
   t_dis = 0:NT
   N = rep(N_initial,NT+1)
   
-  for(t in 1:(NT-1)){
+  for(t in 1:(NT)){
     N[t+1] = N[t] + r*N[t]*(1-N[t]/K)
   }
   return(N)
@@ -194,6 +190,21 @@ MGR
 
 pop_size = pop_size_MGR(MGR,K)
 pop_size
+
+# Set initial conditions
+r = 0.3
+N_initial = 2
+NT = 52
+K = 250
+
+# Create an empty plot
+plot(0, type='n', xlim = range(0:NT))
+
+# Call function and graph
+for(x in 0:NT){
+  N = dis_log_growth(N_initial, r, NT, K)
+  points(N,N,type = 'p', cex = 16)
+}
 
 ```
 
