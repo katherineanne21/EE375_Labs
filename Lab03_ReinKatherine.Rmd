@@ -25,7 +25,7 @@ NT = 10
 
 # Call function and graph
 N = con_exp_growth(N_initial, r, NT)
-plot(0:NT, N, type = 'l', main = "Continuous Exponential Growth Function", xlab = "Time", ylab = "Population Size", col = "DarkBlue")
+plot(0:NT, N, type = 'l', main = "Continuous Exponential Growth Function", xlab = "Time", ylab = "Population Size", col = "darkblue")
 ```
 
 ## A2 - Discrete Growth
@@ -50,7 +50,7 @@ NT = 10
 
 # Call function and graph
 N = dis_exp_growth(N_initial, r, NT)
-plot(0:NT, N, type = 'p', main = "Discrete Exponential Growth Function", xlab = "Time", ylab = "Population Size", col = "DarkBlue", pch = 16)
+plot(0:NT, N, type = 'p', main = "Discrete Exponential Growth Function", xlab = "Time", ylab = "Population Size", col = "darkblue", pch = 16)
 ```
 
 ## A3 - Doubling Time
@@ -84,9 +84,9 @@ N_con = con_exp_growth(N_initial, r, NT)
 N_dis = dis_exp_growth(N_initial, r, NT)
 
 # Graph both functions
-plot(0:NT, N_con, type = 'l', main = "Exponential Growth Functions", xlab = "Time", ylab = "Population Size", col = "DarkBlue", lwd = 2)
-lines(0:NT, N_dis, type = 'p', main = "Exponential Growth Functions", xlab = "Time", ylab = "Population Size", col = "Red", pch = 16, lwd = 2)
-legend("topleft", legend = c("Continuous","Discrete"), col = c("DarkBlue","Red"), lty = c(1, NA), pch = c(NA, 16), lwd = c(2,2))
+plot(0:NT, N_con, type = 'l', main = "Exponential Growth Functions", xlab = "Time", ylab = "Population Size", col = "darkblue", lwd = 2)
+lines(0:NT, N_dis, type = 'p', main = "Exponential Growth Functions", xlab = "Time", ylab = "Population Size", col = "red", pch = 16, lwd = 2)
+legend("topleft", legend = c("Continuous","Discrete"), col = c("darkblue","red"), lty = c(1, NA), pch = c(NA, 16), lwd = c(2,2))
 ```
 
 ## A5 - Sensitivity Analysis
@@ -112,9 +112,9 @@ for(x in 0:i){
 }
 
 # Plot Data
-plot(r_ten, N_ten, log = "y", type = 'p', xlim = range(r_ten), ylim = range(N_ten), main = "Sensitivity of r", xlab = "r", ylab = "Log of Population Size", col = "DarkBlue", lwd = 1, cex = 0.75)
+plot(r_ten, N_ten, log = "y", type = 'p', xlim = range(r_ten), ylim = range(N_ten), main = "Sensitivity of r", xlab = "r", ylab = "Log of Population Size", col = "darkblue", lwd = 1, cex = 0.75)
 
-plot(N_initial_ten, N_ten, log = "y", type = 'p', xlim = range(N_initial_ten), ylim = range(N_ten), main = "Sensitivity of Initial Population Size", xlab = "Initial Population Size", ylab = "Log of Population Size", col = "DarkBlue", lwd = 1, cex = 0.75)
+plot(N_initial_ten, N_ten, log = "y", type = 'p', xlim = range(N_initial_ten), ylim = range(N_ten), main = "Sensitivity of Initial Population Size", xlab = "Initial Population Size", ylab = "Log of Population Size", col = "darkblue", lwd = 1, cex = 0.75)
 ```
 
 b) From my graphs, it does not seem to that one parameter is more sensitive to population size than the other as they are roughly the same graph. There is an almost linear relationship between the log of the population and the parameters. 
@@ -143,7 +143,7 @@ K = 250
 
 # Call function and graph
 N = dis_log_growth(N_initial, r, NT, K)
-plot(0:NT, N, type = 'p', main = "Discrete Logistic Growth Function", xlab = "Time", ylab = "Population Size", col = "DarkBlue")
+plot(0:NT, N, type = 'p', main = "Discrete Logistic Growth Function", xlab = "Time", ylab = "Population Size", col = "darkblue")
 ```
 
 ## B2 - Carrying Capacity
