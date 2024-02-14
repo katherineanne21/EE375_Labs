@@ -54,16 +54,20 @@ equil_stock_size
 # Set Initial Conditions
 r = 0.6 # units: fish per year
 K = 3200 # units: tonnes
-N = 0:K
+N = 1:K
+N_18 = N
 
 # Calculate dNdt and 18%
 dNdt = log_growth_rate(r,N,K)
-dNdt_18 = dNdt * 0.18 # Is this what you're looking for?
+
+for(t in 1:N){
+    N_18[t+1] = N[t] + r*N[t]*(1-N[t]/K) - 0.18
+  } 
 
 # Graph
 plot(N,dNdt, type = "l", lwd = 2, ylim = range(dNdt), xlim = range(N), col = "black", main = "Sustainable Yield Curve", xlab = "Population Size (tonnes)", ylab = "Growth Rate (tonnes of fish/year)")
-lines(N,dNdt_18, lwd = 2, lty = 2, ylim = range(dNdt), xlim = range(N), col = "red")
-legend("topleft", legend = c("SYC","18% SYC"), col = c("black","red"), lty = c(1, 2), lwd = c(2,2))
+lines(N,N_18, lwd = 2, lty = 2, ylim = range(dNdt), xlim = range(N), col = "red")
+legend("topright", legend = c("SYC","18% SYC"), col = c("black","red"), lty = c(1, 2), lwd = c(2,2))
 ```
 
 ## B2 - Estimate Harvest and Stock Limits
