@@ -58,7 +58,7 @@ plot(0:NT, N, type = 'p', main = "Discrete Exponential Growth Function", xlab = 
 ```{r}
 # Define a doubling time function
 doubling_time <- function(r){
-  double_time = (exp(2))/r
+  double_time = (log(2))/r
   return(double_time)
 }
 
@@ -68,7 +68,7 @@ r = 0.4
 # Call function and output answer
 double_time = doubling_time(r)
 rounded_double_time = round(double_time,2)
-print(paste("The doubling time according to both the discrete and continuous functions is", rounded_double_time))
+print(paste("The doubling time according to both the discrete and continuous functions is", rounded_double_time, "weeks"))
 ```
 
 ## A4 - Both Curves One Graph
