@@ -99,25 +99,28 @@ r = seq(from = 0, to = 1, length.out = i)
 N_initial = seq(from = 1, to = 100, length.out = i)
 
 # Create Vectors
-N_ten = rep(0,NT)
-r_ten = rep(0,NT)
-N_initial_ten = rep(0,NT)
+N_ten_r = rep(0,NT)
+N_ten_N0 = rep(0,NT)
 
 # Find the 10th value for each set of conditions
-for(x in 0:i){
-  N = con_exp_growth(N_initial[x], r[x], NT)
-  N_ten[x] = N[10]
-  r_ten[x] = r[x]
-  N_initial_ten[x] = N_initial[x]
+# Do a for loop for changing r and one for changing N0
+for(x in 1:i){
+  N = con_exp_growth(38, r[x], NT)
+  N_ten_r[x] = N[10]
+}
+
+for(x in 1:i){
+  N = con_exp_growth(N_initial[x], 0.4, NT)
+  N_ten_N0[x] = N[10]
 }
 
 # Plot Data
-plot(r_ten, N_ten, log = "y", type = 'p', xlim = range(r_ten), ylim = range(N_ten), main = "Sensitivity of r", xlab = "r", ylab = "Log of Population Size", col = "darkblue", lwd = 1, cex = 0.75)
+plot(r, N_ten_r, type = 'p', xlim = range(r), ylim = range(N_ten_r), main = "Sensitivity of r", xlab = "r", ylab = "Population Size", col = "darkblue", lwd = 1, cex = 0.75)
 
-plot(N_initial_ten, N_ten, log = "y", type = 'p', xlim = range(N_initial_ten), ylim = range(N_ten), main = "Sensitivity of Initial Population Size", xlab = "Initial Population Size", ylab = "Log of Population Size", col = "darkblue", lwd = 1, cex = 0.75)
+plot(N_initial, N_ten_N0, type = 'p', xlim = range(N_initial), ylim = range(N_ten_N0), main = "Sensitivity of Initial Population Size", xlab = "Initial Population Size", ylab = "Population Size", col = "darkblue", lwd = 1, cex = 0.75)
 ```
 
-b) From my graphs, it does not seem to that one parameter is more sensitive to population size than the other as they are roughly the same graph. There is an almost linear relationship between the log of the population and the parameters. 
+b) From my graphs, it seems that r increases exponentially in sensitivity as it increases. For initial population size, it doesn't seem to be changing drastically ever.
 
 c) I chose 0 to 1 for r and 1 to 100 for initial population size because they seemed similar to the values used in previous examples. 
 
