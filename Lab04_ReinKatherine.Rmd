@@ -119,13 +119,13 @@ alpha = 0.001
 
 # Define E and H and then graph
 Effort_Yield_Curve <- function(r,K,N,alpha){
-  E = (r/alpha)*(1 - (N/K))
-  H = alpha*E*N
+  effort = (r/alpha)*(1 - (N/K))
+  H = alpha*effort*N
   
   # Plot the effort vs harvest vectors
-  plot(E, H, type = "l", lwd = 2, ylim = range(H), xlim = range(E), col =
-         "black", main = "Effort Yield Curve", xlab = "Effort", ylab =
-         "Harvest")
+  plot(effort, H, type = "l", lwd = 2, ylim = range(H), xlim = range(effort), 
+       col = "black", main = "Effort Yield Curve", xlab = "Effort", ylab 
+       ="Harvest")
 }
 
 # Call Curve function
@@ -136,19 +136,27 @@ Effort_Yield_Curve(r,K,N,alpha)
 ## D1 - Revenue, Costs, Profit Graph
 
 ```{r}
-cost_plot <- 
-
-
-
 # Initial Conditions
 r = 0.6 # units: fish per year
 K = 3200 # units: tonnes
 N = 0:K
 alpha = 0.001
+c = 10000 # cost per fishing vessel
+market_price = 10 * 1000 # cost per kg * tonnes conversion
 
 # Calculating other variables
-E = (r/alpha)*(1 - (N/K))
+effort = (r/alpha)*(1 - (N/K))
+H = alpha*effort*N
 
+# Calculating new vectors
+Total_Cost = effort*c
+Total_Revenue = market_price*H
+Profit = Total_Revenue - Total_Cost
+
+# Graph
+plot(effort, Total_Revenue, type = "l", lwd = 2, col = "red", ylim = range(Total_Revenue), xlim = range(effort), main = "Revenues and Costs", xlab = "Effort", ylab = "Revenue")
+lines(effort, Total_Cost, type = "l", lwd = 2, col = "black")
+lines(effort, Profit, type = "l", lwd = 2, col = "blue")
 ```
 
 
