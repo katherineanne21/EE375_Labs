@@ -69,7 +69,8 @@ legend("topright", legend = c("SYC","18% SYC"), col = c("black","red"), lty = c(
 
 ## B2 - Estimate Harvest and Stock Limits
 
-I'm not sure how to do this
+Harvest: 200 tonnes/year
+Stock: 2750 tonnes
 
 ## B3 - Total Harvest
 
@@ -136,28 +137,36 @@ Effort_Yield_Curve(r,K,N,alpha)
 ## D1 - Revenue, Costs, Profit Graph
 
 ```{r}
+Revenue_Cost_Graph <- function(r,K,alpha,c,market_price,title){
+  # Initial Variables
+  N = 0:K
+  effort = (r/alpha)*(1 - (N/K))
+  H = alpha*effort*N
+
+  # Calculating new vectors
+  Total_Cost = effort*c
+  Total_Revenue = market_price*H
+  Profit = Total_Revenue - Total_Cost
+
+  # Graph
+  plot(effort, Total_Revenue, type = "l", lwd = 2, col = "red", ylim = 
+         range(Total_Revenue), xlim = range(effort), main = title, xlab = "Effort", ylab = "Revenue")
+  lines(effort, Total_Cost, type = "l", lwd = 2, col = "purple")
+  lines(effort, Profit, type = "l", lwd = 2, col = "blue")
+  legend("bottomright", legend = c("Revenue","Cost","Profit"), col = 
+           c("red","purple","blue"), lwd = c(2,2,2))
+}
+
 # Initial Conditions
 r = 0.6 # units: fish per year
 K = 3200 # units: tonnes
-N = 0:K
 alpha = 0.001
 c = 10000 # cost per fishing vessel
 market_price = 10 * 1000 # cost per kg * tonnes conversion
+title = "Revenues and Costs"
 
-# Calculating other variables
-effort = (r/alpha)*(1 - (N/K))
-H = alpha*effort*N
-
-# Calculating new vectors
-Total_Cost = effort*c
-Total_Revenue = market_price*H
-Profit = Total_Revenue - Total_Cost
-
-# Graph
-plot(effort, Total_Revenue, type = "l", lwd = 2, col = "red", ylim = range(Total_Revenue), xlim = range(effort), main = "Revenues and Costs", xlab = "Effort", ylab = "Revenue")
-lines(effort, Total_Cost, type = "l", lwd = 2, col = "purple")
-lines(effort, Profit, type = "l", lwd = 2, col = "blue")
-legend("bottomright", legend = c("Revenue","Cost","Profit"), col = c("red","purple","blue"), lwd = c(2,2,2))
+# Call function
+Revenue_Cost_Graph(r,K,alpha,c,market_price,title)
 ```
 
 ## D2 - Maximize Economic Yield (Effort, Profit, Per Vessel Profit)
@@ -174,25 +183,13 @@ legend("bottomright", legend = c("Revenue","Cost","Profit"), col = c("red","purp
 # Initial Conditions
 r = 0.6 # units: fish per year
 K = 3200 # units: tonnes
-N = 0:K
 alpha = 0.001
 c = 10000 *.9 # cost per fishing vessel
 market_price = 10 * 1000 # cost per kg * tonnes conversion
+title = "Revenues and Costs (10% Subsidy)"
 
-# Calculating other variables
-effort = (r/alpha)*(1 - (N/K))
-H = alpha*effort*N
-
-# Calculating new vectors
-Total_Cost = effort*c
-Total_Revenue = market_price*H
-Profit = Total_Revenue - Total_Cost
-
-# Graph
-plot(effort, Total_Revenue, type = "l", lwd = 2, col = "red", ylim = range(Total_Revenue), xlim = range(effort), main = "Revenues and Costs (10% Subsidy)", xlab = "Effort", ylab = "Revenue")
-lines(effort, Total_Cost, type = "l", lwd = 2, col = "purple")
-lines(effort, Profit, type = "l", lwd = 2, col = "blue")
-legend("bottomright", legend = c("Revenue","Cost","Profit"), col = c("red","purple","blue"), lwd = c(2,2,2))
+# Call function
+Revenue_Cost_Graph(r,K,alpha,c,market_price,title)
 ```
 
 ## D5 - Catchability Increase
@@ -201,24 +198,12 @@ legend("bottomright", legend = c("Revenue","Cost","Profit"), col = c("red","purp
 # Initial Conditions
 r = 0.6 # units: fish per year
 K = 3200 # units: tonnes
-N = 0:K
 alpha = 0.001 * 1.5 # increase catchability by 50%
-c = 10000 *.9 # cost per fishing vessel
+c = 10000 # cost per fishing vessel
 market_price = 10 * 1000 # cost per kg * tonnes conversion
+title = "Revenues and Costs (Catchability Increase)"
 
-# Calculating other variables
-effort = (r/alpha)*(1 - (N/K))
-H = alpha*effort*N
-
-# Calculating new vectors
-Total_Cost = effort*c
-Total_Revenue = market_price*H
-Profit = Total_Revenue - Total_Cost
-
-# Graph
-plot(effort, Total_Revenue, type = "l", lwd = 2, col = "red", ylim = range(Total_Revenue), xlim = range(effort), main = "Revenues and Costs (Catchability Increase)", xlab = "Effort", ylab = "Revenue")
-lines(effort, Total_Cost, type = "l", lwd = 2, col = "purple")
-lines(effort, Profit, type = "l", lwd = 2, col = "blue")
-legend("bottomright", legend = c("Revenue","Cost","Profit"), col = c("red","purple","blue"), lwd = c(2,2,2))
+# Call function
+Revenue_Cost_Graph(r,K,alpha,c,market_price,title)
 ```
 
