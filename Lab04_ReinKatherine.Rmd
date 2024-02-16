@@ -80,6 +80,48 @@ I'm not sure how to do this
 
 ```
 
+## C1 - Liscensed Vessels Graph
+
+```{r}
+
+```
+
+## C2 - Per Vessel Harvest
+
+```{r}
+# Calculate the growth rate for a vector of N's
+log_growth_rate <- function(r,N,K){
+  dNdt = r*N*(1-(N/K))
+  return(dNdt)
+}
+
+license_limits <- function(alpha,E,N){
+  for(i in 1:length(E)){
+    H = alpha*E[i]*N
+    lines(N, H, col = i+1) # color will change with i
+  } 
+  legend("bottomright", title = "Licensed Vessels", legend = E,
+         col = 2:(length(E) + 1), lty = 1)
+}
+
+# Set Initial Conditions
+r = 0.6 # units: fish per year
+K = 3200 # units: tonnes
+N = 0:K
+alpha = 0.001
+E = c(50,100,200,500)
+
+# Calculate dNdt
+dNdt = log_growth_rate(r,N,K)
+
+# Initial Graph
+plot(N,dNdt, type = "l", lwd = 2, ylim = range(dNdt), xlim = range(N), col = "black", main = "Sustainable Yield Curve", xlab = "Population Size (tonnes)", ylab = "Growth Rate (tonnes of fish/year)")
+
+# Add License Limits Lines
+license_limits(alpha,E,N)
+```
+
+
 
 
 
