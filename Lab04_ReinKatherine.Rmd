@@ -99,7 +99,7 @@ plot(N,dNdt, type = "l", lwd = 2, ylim = range(dNdt), xlim = range(N), col = "bl
 
 # Add License Limits Lines
 license_limits(alpha,E,N)
-legend("bottomright", title = "Licensed Vessels", legend = E,
+legend("bottomleft", title = "Licensed Vessels", legend = E,
          col = 2:(length(E) + 1), lty = 1)
 
 ```
@@ -155,9 +155,70 @@ Profit = Total_Revenue - Total_Cost
 
 # Graph
 plot(effort, Total_Revenue, type = "l", lwd = 2, col = "red", ylim = range(Total_Revenue), xlim = range(effort), main = "Revenues and Costs", xlab = "Effort", ylab = "Revenue")
-lines(effort, Total_Cost, type = "l", lwd = 2, col = "black")
+lines(effort, Total_Cost, type = "l", lwd = 2, col = "purple")
 lines(effort, Profit, type = "l", lwd = 2, col = "blue")
+legend("bottomright", legend = c("Revenue","Cost","Profit"), col = c("red","purple","blue"), lwd = c(2,2,2))
 ```
 
+## D2 - Maximize Economic Yield (Effort, Profit, Per Vessel Profit)
 
+
+
+## D3 - MEY (Total Harvest)
+
+
+
+## D4 - 10% Subsidy
+
+```{r}
+# Initial Conditions
+r = 0.6 # units: fish per year
+K = 3200 # units: tonnes
+N = 0:K
+alpha = 0.001
+c = 10000 *.9 # cost per fishing vessel
+market_price = 10 * 1000 # cost per kg * tonnes conversion
+
+# Calculating other variables
+effort = (r/alpha)*(1 - (N/K))
+H = alpha*effort*N
+
+# Calculating new vectors
+Total_Cost = effort*c
+Total_Revenue = market_price*H
+Profit = Total_Revenue - Total_Cost
+
+# Graph
+plot(effort, Total_Revenue, type = "l", lwd = 2, col = "red", ylim = range(Total_Revenue), xlim = range(effort), main = "Revenues and Costs (10% Subsidy)", xlab = "Effort", ylab = "Revenue")
+lines(effort, Total_Cost, type = "l", lwd = 2, col = "purple")
+lines(effort, Profit, type = "l", lwd = 2, col = "blue")
+legend("bottomright", legend = c("Revenue","Cost","Profit"), col = c("red","purple","blue"), lwd = c(2,2,2))
+```
+
+## D5 - Catchability Increase
+
+```{r}
+# Initial Conditions
+r = 0.6 # units: fish per year
+K = 3200 # units: tonnes
+N = 0:K
+alpha = 0.001 * 1.5 # increase catchability by 50%
+c = 10000 *.9 # cost per fishing vessel
+market_price = 10 * 1000 # cost per kg * tonnes conversion
+
+# Calculating other variables
+effort = (r/alpha)*(1 - (N/K))
+H = alpha*effort*N
+
+# Calculating new vectors
+Total_Cost = effort*c
+Total_Revenue = market_price*H
+Profit = Total_Revenue - Total_Cost
+
+# Graph
+plot(effort, Total_Revenue, type = "l", lwd = 2, col = "red", ylim = range(Total_Revenue), xlim = range(effort), main = "Revenues and Costs (Catchability Increase)", xlab = "Effort", ylab = "Revenue")
+lines(effort, Total_Cost, type = "l", lwd = 2, col = "purple")
+lines(effort, Profit, type = "l", lwd = 2, col = "blue")
+legend("bottomright", legend = c("Revenue","Cost","Profit"), col = c("red","purple","blue"), lwd = c(2,2,2))
+```
 
