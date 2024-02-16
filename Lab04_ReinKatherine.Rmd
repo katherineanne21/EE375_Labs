@@ -59,14 +59,11 @@ N_18 = N
 
 # Calculate dNdt and 18%
 dNdt = log_growth_rate(r,N,K)
-
-for(t in 1:N){
-    N_18[t+1] = N[t] + r*N[t]*(1-N[t]/K) - 0.18
-  } 
+N_18 = log_growth_rate(r,N*0.18,K)
 
 # Graph
 plot(N,dNdt, type = "l", lwd = 2, ylim = range(dNdt), xlim = range(N), col = "black", main = "Sustainable Yield Curve", xlab = "Population Size (tonnes)", ylab = "Growth Rate (tonnes of fish/year)")
-lines(N,N_18, lwd = 2, lty = 2, ylim = range(dNdt), xlim = range(N), col = "red")
+lines(N, N_18, lwd = 2, lty = 2, col = "red")
 legend("topright", legend = c("SYC","18% SYC"), col = c("black","red"), lty = c(1, 2), lwd = c(2,2))
 ```
 
@@ -136,6 +133,23 @@ Effort_Yield_Curve(r,K,N,alpha)
 
 ```
 
+## D1 - Revenue, Costs, Profit Graph
+
+```{r}
+cost_plot <- 
+
+
+
+# Initial Conditions
+r = 0.6 # units: fish per year
+K = 3200 # units: tonnes
+N = 0:K
+alpha = 0.001
+
+# Calculating other variables
+E = (r/alpha)*(1 - (N/K))
+
+```
 
 
 
