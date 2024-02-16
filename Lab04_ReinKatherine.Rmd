@@ -8,6 +8,12 @@ date: "2024-02-07"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Questions
+
+C4 - How do I do this one?
+
+
+
 ## A1/A3 - Sustainable Yield Curve
 
 ```{r}
@@ -138,6 +144,10 @@ Effort_Yield_Curve <- function(r,K,N,alpha){
 Effort_Yield_Curve(r,K,N,alpha)
 
 ```
+
+## C4 - Effort Results in MSY
+
+Effort: 300
 
 ## D1 - Revenue, Costs, Profit Graph
 
