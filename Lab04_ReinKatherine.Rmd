@@ -87,7 +87,7 @@ The first year harvest is 576 which is greater than the MSY. This is possible be
 license_limits <- function(alpha,E,N){
   for(i in 1:length(E)){
     H = alpha*E[i]*N
-    lines(N, H, col = i+1) # color will change with i
+    lines(N, H, col = i+1, lwd = 2) # color will change with i
   } 
 }
 
@@ -103,14 +103,16 @@ plot(N,dNdt, type = "l", lwd = 2, ylim = range(dNdt), xlim = range(N), col = "bl
 
 # Add License Limits Lines
 license_limits(alpha,E,N)
-legend("bottomleft", title = "Licensed Vessels", legend = E,
-         col = 2:(length(E) + 1), lty = 1)
+legend("bottomright", title = "Licensed Vessels", legend = E,
+         col = 2:(length(E) + 1), lwd = 2)
 
 ```
 
 ## C2 - Per Vessel Harvest
 
-
+Tonnes of Fish for...
+100 Vessels: 2600 and 260 fish per vessel
+500 Vessels: 600 and 1.2 fish per vessel
 
 ## C3 - Effort Yield Curve
 
