@@ -75,8 +75,11 @@ Stock: 2750 tonnes
 ## B3 - Total Harvest
 
 ```{r}
-
+Harvest = 0.18*K
+Harvest
 ```
+
+The first year harvest is 576 which is greater than the MSY. This is possible because the sustainable yield curve simply shows us what is a sustainable harvest not every possible harvest.
 
 ## C1 - Liscensed Vessels Graph
 
