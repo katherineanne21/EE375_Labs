@@ -89,12 +89,6 @@ I'm not sure how to do this
 ## C2 - Per Vessel Harvest
 
 ```{r}
-# Calculate the growth rate for a vector of N's
-log_growth_rate <- function(r,N,K){
-  dNdt = r*N*(1-(N/K))
-  return(dNdt)
-}
-
 license_limits <- function(alpha,E,N){
   for(i in 1:length(E)){
     H = alpha*E[i]*N
