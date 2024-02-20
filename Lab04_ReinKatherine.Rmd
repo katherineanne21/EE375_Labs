@@ -11,8 +11,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Questions
 
 C4 - How do I do this one?
-
-
+D2 - How do I calculate per vessel?
+D5 - This one doesn't look any different?
 
 ## A1/A3 - Sustainable Yield Curve
 
@@ -32,8 +32,12 @@ N = 0:K
 dNdt = log_growth_rate(r,N,K)
 plot(N,dNdt, type = "l", lwd = 2, ylim = range(dNdt), xlim = range(N), col = "black", main = "Sustainable Yield Curve", xlab = "Population Size (tonnes)", ylab = "Growth Rate (tonnes of fish/year)")
 
+# MSY Point Calculations
+equil_stock_size = K/2
+msy = (r*K)/4
+
 # Add MSY Point
-points(equil_stock_size,msy, pch = 16, col = "red", lwd = 5)
+points(equil_stock_size, msy, pch = 16, col = "red", lwd = 5)
 
 legend("topleft", legend = c("SYC","MSY"), col = c("black","red"), lty = c(1, NA), pch = c(NA, 16), lwd = c(2,5))
 
@@ -101,8 +105,9 @@ license_limits <- function(alpha,E,N){
 r = 0.6 # units: fish per year
 K = 3200 # units: tonnes
 N = 0:K
+dNdt = log_growth_rate(r,N,K)
 alpha = 0.001
-E = c(50,100,200,500) # number of liscensed vessels
+E = c(50,100,200,500) # number of licensed vessels
 
 # Initial Graph
 plot(N,dNdt, type = "l", lwd = 2, ylim = range(dNdt), xlim = range(N), col = "black", main = "Sustainable Yield Curve", xlab = "Population Size (tonnes)", ylab = "Growth Rate (tonnes of fish/year)")
@@ -165,7 +170,8 @@ Revenue_Cost_Graph <- function(r,K,alpha,c,market_price,title){
 
   # Graph
   plot(effort, Total_Revenue, type = "l", lwd = 2, col = "red", ylim = 
-         range(Total_Revenue), xlim = range(effort), main = title, xlab = "Effort", ylab = "Revenue")
+         range(Total_Revenue), xlim = c(0,600), main = title, xlab = "Effort",
+       ylab = "Revenue ($)")
   lines(effort, Total_Cost, type = "l", lwd = 2, col = "purple")
   lines(effort, Profit, type = "l", lwd = 2, col = "blue")
   legend("bottomright", legend = c("Revenue","Cost","Profit"), col = 
@@ -186,11 +192,14 @@ Revenue_Cost_Graph(r,K,alpha,c,market_price,title)
 
 ## D2 - Maximize Economic Yield (Effort, Profit, Per Vessel Profit)
 
-
+Optimal Effort: 200
+Profit: 2000000
+Per Vessel:
 
 ## D3 - MEY (Total Harvest)
 
-
+Total Harvest: 400
+The total harvest at MEY is double that at MSY.
 
 ## D4 - 10% Subsidy
 
@@ -221,4 +230,8 @@ title = "Revenues and Costs (Catchability Increase)"
 # Call function
 Revenue_Cost_Graph(r,K,alpha,c,market_price,title)
 ```
+
+The optimal level of effort decreases to roughly 150. The profit seems to increase to roughly $3000000.
+
+
 
