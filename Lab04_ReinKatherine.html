@@ -357,8 +357,8 @@ display: none;
 
 <div id="questions" class="section level2">
 <h2>Questions</h2>
-<p>C4 - How do I do this one? D2 - How do I calculate per vessel? D5 -
-This one doesn’t look any different?</p>
+<p>D2 - How do I calculate per vessel? D5 - This one doesn’t look any
+different?</p>
 </div>
 <div id="a1a3---sustainable-yield-curve" class="section level2">
 <h2>A1/A3 - Sustainable Yield Curve</h2>
@@ -488,6 +488,20 @@ Effort_Yield_Curve(r,K,N,alpha)</code></pre>
 </div>
 <div id="c4---effort-results-in-msy" class="section level2">
 <h2>C4 - Effort Results in MSY</h2>
+<pre class="r"><code># Initialize variables
+r = 0.6 # units: fish per year
+K = 3200 # units: tonnes
+N = 0:K
+alpha = 0.001
+
+# Create new vectors
+effort = (r/alpha)*(1 - (N/K))
+H = alpha*effort*N
+
+# Calculate what effort results in MSY 
+optimal_EYC = effort[which.max(H)]
+optimal_EYC</code></pre>
+<pre><code>## [1] 300</code></pre>
 <p>Effort: 300</p>
 </div>
 <div id="d1---revenue-costs-profit-graph" class="section level2">
@@ -528,6 +542,31 @@ Revenue_Cost_Graph(r,K,alpha,c,market_price,title)</code></pre>
 <div id="d2---maximize-economic-yield-effort-profit-per-vessel-profit" class="section level2">
 <h2>D2 - Maximize Economic Yield (Effort, Profit, Per Vessel
 Profit)</h2>
+<pre class="r"><code># Initialize variables
+r = 0.6 # units: fish per year
+K = 3200 # units: tonnes
+alpha = 0.001
+c = 10000 # cost per fishing vessel
+H = alpha*effort*N
+market_price = 10 * 1000 # cost per kg * tonnes conversion
+N = 0:K
+effort = (r/alpha)*(1 - (N/K))
+
+# Calculating new vectors
+Total_Cost = effort*c
+Total_Revenue = market_price*H
+Profit = Total_Revenue - Total_Cost
+
+# Calculate Optimal Effort Variables
+optimal_effort = effort[which.max(Profit)]
+profit_at_OE = Profit[optimal_effort]
+
+
+# Print out values
+optimal_effort</code></pre>
+<pre><code>## [1] 206.25</code></pre>
+<pre class="r"><code>profit_at_OE</code></pre>
+<pre><code>## [1] -4464422</code></pre>
 <p>Optimal Effort: 200 Profit: 2000000 Per Vessel:</p>
 </div>
 <div id="d3---mey-total-harvest" class="section level2">
