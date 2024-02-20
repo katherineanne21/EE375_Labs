@@ -8,10 +8,6 @@ date: "2024-02-07"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Questions
-
-D5 - This one doesn't look any different?
-
 ## A1/A3 - Sustainable Yield Curve
 
 ```{r}
@@ -207,6 +203,29 @@ Revenue_Cost_Graph(r,K,alpha,c,market_price,title)
 ## D2 - Maximize Economic Yield (Effort, Profit, Per Vessel Profit)
 
 ```{r}
+optimal_effort_values <- function(r,K,alpha,market_price){
+  # Calculate new variables
+  N = 0:K
+  effort = (r/alpha)*(1 - (N/K))
+  H = alpha*effort*N
+
+  # Calculating new vectors
+  Total_Cost = effort*c
+  Total_Revenue = market_price*H
+  Profit = Total_Revenue - Total_Cost
+
+  # Calculate Optimal Effort Variables
+  optimal_effort_index = which.max(Profit)
+  optimal_effort = effort[optimal_effort_index]
+  profit_at_OE = Profit[optimal_effort_index]
+  per_vessel = profit_at_OE / optimal_effort
+
+  # Print out values
+  print(optimal_effort)
+  print(profit_at_OE)
+  print(per_vessel)
+}
+
 # Initial Conditions
 r = 0.6 # units: fish per year
 K = 3200 # units: tonnes
@@ -214,26 +233,8 @@ alpha = 0.001
 c = 10000 # cost per fishing vessel
 market_price = 10 * 1000 # cost per kg * tonnes conversion
 
-# Calculate new variables
-N = 0:K
-effort = (r/alpha)*(1 - (N/K))
-H = alpha*effort*N
-
-# Calculating new vectors
-Total_Cost = effort*c
-Total_Revenue = market_price*H
-Profit = Total_Revenue - Total_Cost
-
-# Calculate Optimal Effort Variables
-optimal_effort_index_d2 = which.max(Profit)
-optimal_effort_d2 = effort[optimal_effort_index_d2]
-profit_at_OE_d2 = Profit[optimal_effort_index_d2]
-per_vessel_d2 = profit_at_OE_d2 / optimal_effort_d2
-
-# Print out values
-optimal_effort_d2
-profit_at_OE_d2
-per_vessel_d2
+# Print out Optimal Effort Values
+optimal_effort_values(r,K,alpha,market_price)
 
 ```
 
@@ -261,26 +262,8 @@ title = "Revenues and Costs (10% Subsidy)"
 # Call function
 Revenue_Cost_Graph(r,K,alpha,c,market_price,title)
 
-# Calculate new variables
-N = 0:K
-effort = (r/alpha)*(1 - (N/K))
-H = alpha*effort*N
-
-# Calculating new vectors
-Total_Cost = effort*c
-Total_Revenue = market_price*H
-Profit = Total_Revenue - Total_Cost
-
-# Calculate Optimal Effort Variables
-optimal_effort_index_d4 = which.max(Profit)
-optimal_effort_d4 = effort[optimal_effort_index_d4]
-profit_at_OE_d4 = Profit[optimal_effort_index_d4]
-per_vessel_d4 = profit_at_OE_d4 / optimal_effort_d4
-
-# Print out values
-optimal_effort_d4
-profit_at_OE_d4
-per_vessel_d4
+# Print out Optimal Effort Values
+optimal_effort_values(r,K,alpha,market_price)
 
 ```
 The effort increased to 215. The total profit also increased to 2479688. The profit per vessel increased to 11500.
@@ -299,26 +282,8 @@ title = "Revenues and Costs (Catchability Increase)"
 # Call function
 Revenue_Cost_Graph(r,K,alpha,c,market_price,title)
 
-# Calculate new variables
-N = 0:K
-effort = (r/alpha)*(1 - (N/K))
-H = alpha*effort*N
-
-# Calculating new vectors
-Total_Cost = effort*c
-Total_Revenue = market_price*H
-Profit = Total_Revenue - Total_Cost
-
-# Calculate Optimal Effort Variables
-optimal_effort_index_d5 = which.max(Profit)
-optimal_effort_d5 = effort[optimal_effort_index_d5]
-profit_at_OE_d5 = Profit[optimal_effort_index_d5]
-per_vessel_d5 = profit_at_OE_d5 / optimal_effort_d5
-
-# Print out values
-optimal_effort_d5
-profit_at_OE_d5
-per_vessel_d5
+# Print out Optimal Effort Values
+optimal_effort_values(r,K,alpha,market_price)
 
 ```
 
