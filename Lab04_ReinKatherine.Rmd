@@ -52,6 +52,9 @@ equil_stock_size
 
 ```
 
+MSY: 480
+Equilibrium stock size: 1600
+
 ## B1 - 18% Graph
 
 ```{r}
@@ -245,7 +248,31 @@ Per Vessel: 11000
 
 ## D3 - MEY (Total Harvest)
 
-Total Harvest: 400
+```{r}
+# Initial Conditions
+r = 0.6 # units: fish per year
+K = 3200 # units: tonnes
+alpha = 0.001
+c = 10000 # cost per fishing vessel
+market_price = 10 * 1000 # cost per kg * tonnes conversion
+
+# Calculate new variables
+N = 0:K
+effort = (r/alpha)*(1 - (N/K))
+H = alpha*effort*N
+
+# Calculating new vectors
+Total_Cost = effort*c
+Total_Revenue = market_price*H
+Profit = Total_Revenue - Total_Cost
+
+# Calculate total harvest
+total_harvest_index = which.max(Profit)
+total_harvest = H[total_harvest_index]
+total_harvest
+```
+
+Total Harvest: 433
 The total harvest at MEY is double that at MSY.
 
 ## D4 - 10% Subsidy
