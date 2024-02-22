@@ -19,8 +19,22 @@ Time=c(1,10,100,1000)
 C=matrix(NA,5,4) 
 ```
 
+C: concentration of pollutant (grams/cm)
+M: mass of material (grams)
+D: diffusion constant (cm^2/s)
+t: time since release (s)
+x: distance from origin (cm)
+
 **A2.** Fill in the values in your data table using the above equation. Hint: you will want to loop over both time and distance.
 ```{r}
+for(i_x in x){
+  for(i_Time in Time){
+    
+  }
+  
+  
+}
+
 
 ```
 
