@@ -89,6 +89,9 @@ legend("topright",title = "Distance (cm)", legend = x, col = 2:(length(x)+1), lt
 
 **A5.**  Do the graphs look reasonable? Support your answer with the general trend(s) from each graph. Be sure to describe behavior at the extremes (i.e. highest/lowest times and distances).
 
+This makes sense because as time increases then the concentration at all distances converge. This follows as the more time means more ability for mixing which will cause a similar concentration at all points along the tube.
+
+For the distance graph, it makes sense as distance increases, the concentration reaches a steady at all time steps. This follows as the concentration steadies out the further away it gets from the source.
 
 ##Part B
 
