@@ -69,17 +69,22 @@ for(time_spot in 1:length(Time)){
   lines(x, C_matrix[,time_spot], type = 'l', col = time_spot+1)
 }
 
+# Add legend
+legend("topright",title = "Time (s)", legend = Time, col = 2:(length(x)+1), lty = 1)
 ```
  
  b.	Concentration vs. time for each of the distances. 
 	Hint: you’ll want to include log=‘x’ as an argument to plot
 
 ```{r}
-plot(x = NULL,y = NULL, xlab = "Concentration (g/cm)", ylab = "Time (s)", xlim = range(C_matrix[1,]), ylim = range(Time), log = 'x')
+plot(x = NULL,y = NULL, ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix[1,]), xlim = range(Time), log = 'x')
 
 for(x_spot in 1:length(x)){
-  lines(C_matrix[x_spot,],Time , type = 'l', col = x_spot+1)
+  lines(Time, C_matrix[x_spot,], type = 'l', col = x_spot+1)
 }
+
+# Add legend
+legend("topright",title = "Distance (cm)", legend = x, col = 2:(length(x)+1), lty = 1)
 ```
 
 **A5.**  Do the graphs look reasonable? Support your answer with the general trend(s) from each graph. Be sure to describe behavior at the extremes (i.e. highest/lowest times and distances).
