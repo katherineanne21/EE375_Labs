@@ -1,5 +1,5 @@
 ---
-title: "Lab 5 Key"
+title: "Lab 5"
 output: html_document
 ---
 
@@ -27,6 +27,7 @@ t: time since release (s)
 x: distance from origin (cm)
 
 **A2.** Fill in the values in your data table using the above equation. Hint: you will want to loop over both time and distance.
+
 ```{r}
 # Initial Conditions
 M = 10
@@ -55,6 +56,7 @@ t = sec
 2) sqrt(D*t) = cm
 
 grams/cm
+
 
 **A4.**  Using your data table, create two graphs. Include your graphs in your report.
 
@@ -99,48 +101,7 @@ B1.  Calculate the fluxes
   4.3.	Calculate the new Concentration at the next time step given the Concentration currently in each grid cell *plus* the fluxes into the cell *minus* the fluxes out of the cell. Hint: don’t double count fluxes — the flux out of one cell *is* the flux into it’s neighbor .
 
 ```{r}
-# Step 1
-dt=1 
-nt=1000
-time_2=seq(0,nt,dt)
-x = seq(0,2,.5) # same x as Part A
 
-C_matrix2 = matrix(0,length(x),length(time_2))
-
-#step 2
-#initialize
-#grid cell is 1 sec by .5 cm
-Conc[1,1]=M/.5
-
-#step 3-4
-#looping over time and space
-for(t in 1:nt){
-  for(i in 1:nx){
-    
-    if(i==1){
-      Flux.to.left = 0
-      Flux.to.right   = D*Conc[i,t] 
-      Flux.from.left  = 0
-      Flux.from.right = D*Conc[i+1,t]
-    }else{
-      if(i==nx){
-        Flux.to.left = D*Conc[i,t]
-        Flux.to.right   = 0 
-        Flux.from.left  = D*Conc[i-1,t]
-        Flux.from.right = 0
-      }else{
-        Flux.to.left    = D*Conc[i,t] # half flux out
-        Flux.to.right   = D*Conc[i,t] # half flux out
-        Flux.from.left  = D*Conc[i-1,t]
-        Flux.from.right = D*Conc[i+1,t]
-      }
-    }
-    
-    Conc[i,t+1] = Conc[i,t] + 
-      (Flux.from.left + Flux.from.right)*dt/dx -
-      (Flux.to.left + Flux.to.right)*dt/dx
-  }
-}
 ```
 
 **B2.** Create graphs equivalent to those in A4. 
@@ -148,36 +109,17 @@ for(t in 1:nt){
 Concentration vs distance at the times t = 1, 10, 100, and 1000.
 
 ```{r}
-plot(x,Conc[,2],type="b",ylab="Concentration (g/cm)",xlab="Position (cm)")
-for(i in 2:4){
-  lines(x,Conc[,Time[i]+1],col=i,type="b")
-}
-legend("topright",paste(Time,"s"),col=1:4,lty=1)
+
 ```
 
 Concentration vs time at all locations.
 
 ```{r}
-plot(time,Conc[1,],type="l",ylab="Concentration (g/cm)",xlab="Time (s)",ylim=c(0,20),log="x")
-for(i in 2:5){
-  lines(time,Conc[i,],col=i)
-}
-legend("topright",paste(x,"cm"),col=1:5,lty=1)
+
 ```
 
 **B3.** Create graphs that contain both the infinite tube calculation (Part A) and the finite tube calculations (Part B). To keep the number of lines from getting out of hand, only include 2 times in the Concentration vs distance plot and 2 distances in the Concentration vs time plot. (10)
 ```{r}
-plot(x,C[,1],type="l",ylab="Concentration (g/cm)",xlab="Position (cm)")
-lines(x,C[,4],col=4)
-lines(x,Conc[,2],lty=2)
-lines(x,Conc[,1001],lty=2,col=4)
-legend("topright",lty=c(1:2,NA,NA),col=c(1,1,1,4),pch=c(NA,NA,19,19),c("Infinite","Finite","10 s","1000 s"))
-
-plot(Time,C[1,],type="l",ylab="Concentration (g/cm)",xlab="Time (s)",log="x")
-lines(Time,C[5,],col=5)
-lines(time,Conc[1,],lty=2)
-lines(time,Conc[5,],lty=2,col=5)
-legend("topright",lty=c(1:2,NA,NA),col=c(1,1,1,5),pch=c(NA,NA,19,19),c("Infinite","Finite","0 cm","2 cm"))
 
 ```
 
