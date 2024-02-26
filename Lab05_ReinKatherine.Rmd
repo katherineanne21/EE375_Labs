@@ -127,7 +127,22 @@ D = 0.05
 
 C_matrix2[1,1] = 10/0.5 # grams/cm 
 
+# Step 3
 
+for(i_Time in 1:length(time_2)){
+  for(i_x in 1:length(x)){
+    if(i_x == 1){ # CASE 1 FLUX
+      Flux.to.left = ...
+      Flux.from.left = ...
+      Flux.to.right = ...
+      Flux.from.right = ...
+    }else if(i == length(x)){ # CASE 2 FLUX
+      
+    }else{ # CASE 3 FLUX
+
+    }
+  }
+}
 
 ```
 
