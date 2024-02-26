@@ -141,6 +141,10 @@ for(i_Time in 1:length(time_2)){
     }else{ # CASE 3 FLUX
 
     }
+    
+    # Update Concentration
+    C[i_x,i_Time+1] = C[i_x,i_Time] # + (total flux in and out)
+    
   }
 }
 
