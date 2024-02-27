@@ -113,6 +113,7 @@ B1.  Calculate the fluxes
 
 # Creating the new vectors
 dt = 1
+dx = 0.5
 time_2=seq(0, 1000, dt)
 x = seq(0,2,.5) # same x as Part A
 
@@ -125,25 +126,31 @@ D = 0.05
 
 # Step 2
 
-C_matrix2[1,1] = 10/0.5 # grams/cm 
+C_matrix2[1,1] = M/dx # grams/cm 
 
 # Step 3
 
 for(i_Time in 1:length(time_2)){
   for(i_x in 1:length(x)){
-    if(i_x == 1){ # CASE 1 FLUX
-      Flux.to.left = ...
-      Flux.from.left = ...
-      Flux.to.right = ...
-      Flux.from.right = ...
-    }else if(i == length(x)){ # CASE 2 FLUX
-      
-    }else{ # CASE 3 FLUX
-
+    if(i_x == 1){ # CASE 1 FLUX (the start of the tube)
+      Flux.to.left = 0 # bc you are at the left and moving right
+      Flux.from.left = 0  # bc you are at the left and moving right
+      Flux.to.right = D*C_matrix2[i_x,i_Time]
+      Flux.from.right = D*C_matrix2[i_x+1,i_Time]
+    }else if(i_x == length(x)){ # CASE 2 FLUX (the end of the tube)
+      Flux.to.left = D*C_matrix2[i_x,i_Time]
+      Flux.from.left = D*C_matrix2[i_x-1,i_Time]
+      Flux.to.right = 0 # bc you are at the right and no left movement
+      Flux.from.right = 0 # bc you are at the right and no left movement
+    }else{ # CASE 3 FLUX (in between the extremes)
+      Flux.to.left = D*C_matrix2[i_x,i_Time]
+      Flux.from.left = D*C_matrix2[i_x-1,i_Time]
+      Flux.to.right = D*C_matrix2[i_x,i_Time]
+      Flux.from.right = D*C_matrix2[i_x+1,i_Time]
     }
     
     # Update Concentration
-    C[i_x,i_Time+1] = C[i_x,i_Time] # + (total flux in and out)
+    C_matrix2[i_x,i_Time+1] = C_matrix2[i_x,i_Time] +  (Flux.from.left + Flux.from.right)*(dt/dx) -     (Flux.to.left + Flux.to.right)*(dt/dx)
     
   }
 }
@@ -155,13 +162,27 @@ for(i_Time in 1:length(time_2)){
 Concentration vs distance at the times t = 1, 10, 100, and 1000.
 
 ```{r}
+plot(x = NULL,y = NULL, ylab = "Concentration (g/cm)", xlab = "Distance from Origin (cm)", ylim = range(C_matrix2[,1]), xlim = range(x))
 
+for(time_spot in 1:length(Time)){
+  lines(x, C_matrix2[,time_spot], type = 'l', col = time_spot+1)
+}
+
+# Add legend
+legend("topright",title = "Time (s)", legend = Time, col = 2:(length(x)+1), lty = 1)
 ```
 
 Concentration vs time at all locations.
 
 ```{r}
+plot(x = NULL,y = NULL, ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix2[1,]), xlim = range(time_2), log = 'x')
 
+for(x_spot in 1:length(x)){
+  lines(time_2, C_matrix2[x_spot,], type = 'l', col = x_spot+1)
+}
+
+# Add legend
+legend("topright",title = "Distance (cm)", legend = x, col = 2:(length(x)+1), lty = 1)
 ```
 
 **B3.** Create graphs that contain both the infinite tube calculation (Part A) and the finite tube calculations (Part B). To keep the number of lines from getting out of hand, only include 2 times in the Concentration vs distance plot and 2 distances in the Concentration vs time plot. (10)
