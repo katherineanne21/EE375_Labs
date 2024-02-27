@@ -118,7 +118,7 @@ time_2=seq(0, 1000, dt)
 x = seq(0,2,.5) # same x as Part A
 
 # Set up new matrix
-C_matrix2 = matrix(0,length(x),length(time_2))
+C_matrix2 = matrix(0,length(x),length(time_2)+1) # Add an additional column to handle exception
 
 # Initial Conditions
 M = 10
@@ -153,6 +153,9 @@ for(i_Time in 1:length(time_2)){
     C_matrix2[i_x,i_Time+1] = C_matrix2[i_x,i_Time] +  (Flux.from.left + Flux.from.right)*(dt/dx) -     (Flux.to.left + Flux.to.right)*(dt/dx)
   }
 }
+
+# Delete Last Column
+C_matrix2 = C_matrix2[, -ncol(C_matrix2)]
 
 ```
 
