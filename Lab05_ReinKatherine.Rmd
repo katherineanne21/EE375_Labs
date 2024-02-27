@@ -181,14 +181,20 @@ legend("topright",title = "Time (s)", legend = choose_time, col = colors_graph, 
 Concentration vs time at all locations.
 
 ```{r}
-plot(x = NULL,y = NULL, main = "Concentration vs. Time for Finite", ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix2), xlim = range(time_2))
 
-for(x_spot in 1:length(x)){
-  lines(time_2, C_matrix2[x_spot,], type = 'l', col = x_spot+1)
+colors_graph = c(2,3,4,5,6)
+n = 1
+
+plot(time_2, C_matrix2[1,], type = "l", col = colors_graph[n], main = "Concentration vs. Time for Finite", ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix2), log = "x")
+
+n = n+1
+for(x_spot in 2:length(x)){
+  lines(time_2, C_matrix2[x_spot,], type = 'l', col = colors_graph[n])
+  n = n+1
 }
 
 # Add legend
-legend("topright",title = "Distance (cm)", legend = x, col = 2:(length(x)+1), lty = 1)
+legend("topright",title = "Distance (cm)", legend = x, col = colors_graph, lty = 1)
 ```
 
 **B3.** Create graphs that contain both the infinite tube calculation (Part A) and the finite tube calculations (Part B). To keep the number of lines from getting out of hand, only include 2 times in the Concentration vs distance plot and 2 distances in the Concentration vs time plot. (10)
@@ -210,7 +216,7 @@ lines(x, C_matrix2[,101], type = 'l', col = 5)
 legend("topright",title = "Time (s)", legend = c(paste(Time[2], "Infinte"), paste(Time[2], "Infinte"), paste(time_2[11], "Finite"), paste(time_2[101], "Finite")), col = colors_graph, lty = 1)
 
 # Concentration vs Plot
-plot(x = NULL,y = NULL, main = "Concentration vs. Time (both)", ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix2), xlim = range(time_2))
+plot(x = NULL,y = NULL, main = "Concentration vs. Time (both)", ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix), xlim = range(Time))
 
 # Part A lines
 lines(Time, C_matrix[1,], type = 'l', col = 2)
@@ -226,3 +232,7 @@ legend("topright", title = "Distance (cm)", legend = c(paste(x[1], "Infinte"), p
 ```
 
 **B4.** Describe and explain the differences between these plots and how they evolve over time and space.
+
+
+
+
