@@ -216,10 +216,9 @@ lines(x, C_matrix2[,101], type = 'l', col = 5)
 legend("topright",title = "Time (s)", legend = c(paste(Time[2], "Infinte"), paste(Time[2], "Infinte"), paste(time_2[11], "Finite"), paste(time_2[101], "Finite")), col = colors_graph, lty = 1)
 
 # Concentration vs Plot
-plot(x = NULL,y = NULL, main = "Concentration vs. Time (both)", ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix), xlim = range(Time))
+plot(Time, C_matrix[1,], main = "Concentration vs. Time (both)", ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix), log = "x", type = 'l', col = 2)
 
 # Part A lines
-lines(Time, C_matrix[1,], type = 'l', col = 2)
 lines(Time, C_matrix[2,], type = 'l', col = 3)
 
 # Part B lines
