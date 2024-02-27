@@ -63,7 +63,7 @@ grams/cm
  a.	Concentration vs. distance for each of the time periods.
  
 ```{r}
-plot(x = NULL,y = NULL, ylab = "Concentration (g/cm)", xlab = "Distance from Origin (cm)", ylim = range(C_matrix[,1]), xlim = range(x))
+plot(x = NULL,y = NULL, main = "Concentration vs. Distance of Infinite", ylab = "Concentration (g/cm)", xlab = "Distance from Origin (cm)", ylim = range(C_matrix[,1]), xlim = range(x))
 
 for(time_spot in 1:length(Time)){
   lines(x, C_matrix[,time_spot], type = 'l', col = time_spot+1)
@@ -77,7 +77,7 @@ legend("topright",title = "Time (s)", legend = Time, col = 2:(length(x)+1), lty 
 	Hint: you’ll want to include log=‘x’ as an argument to plot
 
 ```{r}
-plot(x = NULL,y = NULL, ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix[1,]), xlim = range(Time), log = 'x')
+plot(x = NULL,y = NULL, main = "Concentration vs. Time for Infinite", ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix[1,]), xlim = range(Time), log = 'x')
 
 for(x_spot in 1:length(x)){
   lines(Time, C_matrix[x_spot,], type = 'l', col = x_spot+1)
@@ -151,7 +151,6 @@ for(i_Time in 1:length(time_2)){
     
     # Update Concentration
     C_matrix2[i_x,i_Time+1] = C_matrix2[i_x,i_Time] +  (Flux.from.left + Flux.from.right)*(dt/dx) -     (Flux.to.left + Flux.to.right)*(dt/dx)
-    
   }
 }
 
@@ -162,20 +161,27 @@ for(i_Time in 1:length(time_2)){
 Concentration vs distance at the times t = 1, 10, 100, and 1000.
 
 ```{r}
-plot(x = NULL,y = NULL, ylab = "Concentration (g/cm)", xlab = "Distance from Origin (cm)", ylim = range(C_matrix2[,1]), xlim = range(x))
+plot(x = NULL,y = NULL, main = "Concentration vs. Distance of Finite", ylab = "Concentration (g/cm)", xlab = "Distance from Origin (cm)", ylim = range(C_matrix2[,1]), xlim = range(x))
 
-for(time_spot in 1:length(Time)){
-  lines(x, C_matrix2[,time_spot], type = 'l', col = time_spot+1)
+# Choose time steps
+choose_time = c(1,10,100,1000)
+colors_graph = c(2,3,4,5)
+n = 1
+
+# Draw lines
+for(t_spot in choose_time){
+  lines(x, C_matrix2[,t_spot], type = 'l', col = colors_graph[n])
+  n = n+1
 }
 
 # Add legend
-legend("topright",title = "Time (s)", legend = Time, col = 2:(length(x)+1), lty = 1)
+legend("topright",title = "Time (s)", legend = choose_time, col = colors_graph, lty = 1)
 ```
 
 Concentration vs time at all locations.
 
 ```{r}
-plot(x = NULL,y = NULL, ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix2[1,]), xlim = range(time_2), log = 'x')
+plot(x = NULL,y = NULL, main = "Concentration vs. Time for Finite", ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix2), xlim = range(time_2))
 
 for(x_spot in 1:length(x)){
   lines(time_2, C_matrix2[x_spot,], type = 'l', col = x_spot+1)
@@ -187,6 +193,35 @@ legend("topright",title = "Distance (cm)", legend = x, col = 2:(length(x)+1), lt
 
 **B3.** Create graphs that contain both the infinite tube calculation (Part A) and the finite tube calculations (Part B). To keep the number of lines from getting out of hand, only include 2 times in the Concentration vs distance plot and 2 distances in the Concentration vs time plot. (10)
 ```{r}
+# Concentration vs Distance Graph
+
+plot(x = NULL,y = NULL, main = "Concentration vs Distance (both)", ylab = "Concentration (g/cm)", xlab = "Distance from Origin (cm)", ylim = range(C_matrix), xlim = range(x))
+colors_graph = c(2,3,4,5)
+
+# Part A lines
+lines(x, C_matrix[,2], type = 'l', col = 2)
+lines(x, C_matrix[,3], type = 'l', col = 3)
+
+# Part B lines
+lines(x, C_matrix2[,11], type = 'l', col = 4)
+lines(x, C_matrix2[,101], type = 'l', col = 5)
+
+# Add legend
+legend("topright",title = "Time (s)", legend = c(paste(Time[2], "Infinte"), paste(Time[2], "Infinte"), paste(time_2[11], "Finite"), paste(time_2[101], "Finite")), col = colors_graph, lty = 1)
+
+# Concentration vs Plot
+plot(x = NULL,y = NULL, main = "Concentration vs. Time (both)", ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix2), xlim = range(time_2))
+
+# Part A lines
+lines(Time, C_matrix[1,], type = 'l', col = 2)
+lines(Time, C_matrix[2,], type = 'l', col = 3)
+
+# Part B lines
+lines(time_2, C_matrix2[1,], type = 'l', col = 4)
+lines(time_2, C_matrix2[2,], type = 'l', col = 5)
+
+# Add legend
+legend("topright", title = "Distance (cm)", legend = c(paste(x[1], "Infinte"), paste(x[2], "Infinte"), paste(x[1], "Finite"), paste(x[2], "Finite")), col = colors_graph, lty = 1)
 
 ```
 
