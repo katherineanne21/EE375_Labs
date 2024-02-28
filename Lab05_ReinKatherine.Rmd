@@ -53,7 +53,9 @@ D = cm^2/sec
 t = sec
 
 1) M/sqrt(D*t)
-2) sqrt(D*t) = cm
+2) D*t = cm^2
+3) sqrt(D*t) = cm
+4) M = grams
 
 grams/cm
 
