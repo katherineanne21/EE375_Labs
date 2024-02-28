@@ -68,7 +68,7 @@ grams/cm
 plot(x = NULL,y = NULL, main = "Concentration vs. Distance of Infinite", ylab = "Concentration (g/cm)", xlab = "Distance from Origin (cm)", ylim = range(C_matrix[,1]), xlim = range(x))
 
 for(time_spot in 1:length(Time)){
-  lines(x, C_matrix[,time_spot], type = 'l', col = time_spot+1)
+  lines(x, C_matrix[,time_spot], type = 'b', col = time_spot+1)
 }
 
 # Add legend
@@ -82,7 +82,7 @@ legend("topright",title = "Time (s)", legend = Time, col = 2:(length(x)+1), lty 
 plot(x = NULL,y = NULL, main = "Concentration vs. Time for Infinite", ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix[1,]), xlim = range(Time), log = 'x')
 
 for(x_spot in 1:length(x)){
-  lines(Time, C_matrix[x_spot,], type = 'l', col = x_spot+1)
+  lines(Time, C_matrix[x_spot,], type = 'b', col = x_spot+1)
 }
 
 # Add legend
@@ -152,7 +152,7 @@ for(i_Time in 1:length(time_2)){
     }
     
     # Update Concentration
-    C_matrix2[i_x,i_Time+1] = C_matrix2[i_x,i_Time] +  (Flux.from.left + Flux.from.right)*(dt/dx) -     (Flux.to.left + Flux.to.right)*(dt/dx)
+    C_matrix2[i_x,i_Time+1] = C_matrix2[i_x,i_Time] +  (Flux.from.left + Flux.from.right)*(dt/dx) - (Flux.to.left + Flux.to.right)*(dt/dx)
   }
 }
 
@@ -175,7 +175,7 @@ n = 1
 
 # Draw lines
 for(t_spot in choose_time){
-  lines(x, C_matrix2[,t_spot], type = 'l', col = colors_graph[n])
+  lines(x, C_matrix2[,t_spot], type = 'b', col = colors_graph[n])
   n = n+1
 }
 
@@ -187,7 +187,7 @@ Concentration vs time at all locations.
 
 ```{r}
 
-colors_graph = c(2,3,4,5,6)
+colors_graph = c("red","orange","green","blue","purple")
 n = 1
 
 plot(time_2, C_matrix2[1,], type = "l", col = colors_graph[n], main = "Concentration vs. Time for Finite", ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix2), log = "x")
@@ -207,28 +207,28 @@ legend("topright",title = "Distance (cm)", legend = x, col = colors_graph, lty =
 # Concentration vs Distance Graph
 
 plot(x = NULL,y = NULL, main = "Concentration vs Distance (both)", ylab = "Concentration (g/cm)", xlab = "Distance from Origin (cm)", ylim = range(C_matrix), xlim = range(x))
-colors_graph = c(2,3,4,5)
+colors_graph = c("red","orange","green","blue", "purple")
 
 # Part A lines
-lines(x, C_matrix[,2], type = 'l', col = 2)
-lines(x, C_matrix[,3], type = 'l', col = 3)
+lines(x, C_matrix[,2], type = 'b', col = colors_graph[1])
+lines(x, C_matrix[,3], type = 'b', col = colors_graph[2])
 
 # Part B lines
-lines(x, C_matrix2[,11], type = 'l', col = 4)
-lines(x, C_matrix2[,101], type = 'l', col = 5)
+lines(x, C_matrix2[,11], type = 'b', col = colors_graph[3])
+lines(x, C_matrix2[,101], type = 'b', col = colors_graph[4])
 
 # Add legend
 legend("topright",title = "Time (s)", legend = c(paste(Time[2], "Infinte"), paste(Time[2], "Infinte"), paste(time_2[11], "Finite"), paste(time_2[101], "Finite")), col = colors_graph, lty = 1)
 
 # Concentration vs Plot
-plot(Time, C_matrix[1,], main = "Concentration vs. Time (both)", ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix), log = "x", type = 'l', col = 2)
+plot(Time, C_matrix[1,], main = "Concentration vs. Time (both)", ylab = "Concentration (g/cm)", xlab = "Time (s)", ylim = range(C_matrix), log = "x", type = 'b', col = colors_graph[1])
 
 # Part A lines
-lines(Time, C_matrix[2,], type = 'l', col = 3)
+lines(Time, C_matrix[2,], type = 'b', col = colors_graph[2])
 
 # Part B lines
-lines(time_2, C_matrix2[1,], type = 'l', col = 4)
-lines(time_2, C_matrix2[2,], type = 'l', col = 5)
+lines(time_2, C_matrix2[1,], type = 'l', col = colors_graph[3])
+lines(time_2, C_matrix2[2,], type = 'l', col = colors_graph[4])
 
 # Add legend
 legend("topright", title = "Distance (cm)", legend = c(paste(x[1], "Infinte"), paste(x[2], "Infinte"), paste(x[1], "Finite"), paste(x[2], "Finite")), col = colors_graph, lty = 1)
@@ -237,6 +237,8 @@ legend("topright", title = "Distance (cm)", legend = c(paste(x[1], "Infinte"), p
 
 **B4.** Describe and explain the differences between these plots and how they evolve over time and space.
 
+For concentration vs distance, the infinite series is quite a bit lower than the finite series. This makes sense as the concentration has less space to go in a finite series so the same amount of mass is in a smaller space causing the concentration to increase.
 
+For concentration vs time, the infinite series is also quite a bit lower than the finite series. The main difference for this one, is that 0.5 finite starts out as the lowest, even lower than 0.5 infinite.
 
 
