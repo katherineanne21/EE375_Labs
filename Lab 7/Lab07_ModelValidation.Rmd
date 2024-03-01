@@ -1,0 +1,175 @@
+---
+title: "Lab 07 - Model Validation"
+author: "GE375"
+output: html_document
+---
+
+The goal of this lab is to explore some of the graphs and diagnostics that are routinely employed in order to evaluate model performance.
+
+Keeping with the theme of soil fluxes, we will be evaluating the performance of a terrestrial biosphere model against measurements of soil temperature and moisture. The measurements come from two sites in the upper midwest, Willow Creek and Sylvania Wilderness, that are part of the Ameriflux network of towers measuring fluxes of CO2, latent heat, and sensible heat (http://ameriflux.ornl.gov). Soil moisture and temperature for different depths are 'ancillary' data that are available for most sites. 
+
+Begin by loading a library that we'll use for some of our plots. Note you may need to install plotrix before you can load it as a library. To do this run the following command in the console: install.packages("plotrix"). You can ingnore the warning that plotrix was build under an old version of R. 
+
+```{r}
+library(plotrix)
+```
+
+Download Model.RData and put it in your Lab07 folder with this .rmd. Check that your working directory is set to the folder you want to use for this lab. 
+
+```{r}
+getwd()
+```
+
+Remember that you can change your working directory with the command setwd(). 
+
+Next, load the model output. This output has been saved as an Rdata object where the variable 'model' is a list containing the model output for Willow Creek ( model[[1]] ) and Sylvania ( model[[2]] ). We've also already extracted the two soil variables (moisture and temperature) for two depths for each of the two sites (8 time series in total), and stored this as a list named 'm', where each element in the list is one of the 8 time series. Use the function 'names' to see what variables are output by the model and what the 8 time series are.
+
+```{r}
+load("Model.Rdata")
+names(model[[1]])
+names(m)
+```
+
+Next, use notepad to take a quick look inside the csv data files so you can see how they are formatted and the metadata they contain. Also, look at the metadata file “L2 Readme.doc” to see what measurements are made at each site and what variables are available for evaluating the model.
+
+We'll next load these data into R as a list called 'data'.
+
+In the code below, the final bit of code [-1,] removes the first row from the matrix as this contains metadata rather than actual measurements. **To read the files correctly you will have replace the ... with the additional arguments 'skip' and 'na.strings'**. Skip will cause the function to skip the number of lines that you specify in the header. After you do this, look at the first row of data (data[[1]][1,]). If the code is correct the variable names should be the column names and sensible numbers should be in the first row. Next, the na.strings argument causes the function to interpret certain missing data values as NA (not available). If you look through the metadata you will see that there are TWO such values in these files, one that indicated missing data, the other that indicates that measurements were not collected for that variable. In addition to consulting the meta-data you will want to look at the 'help' description of read.csv to see more on how these to arguments work.
+
+```{r}
+data <- list()
+data[[1]] <- read.csv("AMF_USWCr_2002_L2_WG_V004.csv",...)[-1,]
+data[[2]] <- read.csv("AMF_USSyv_2002_L2_WG_V003.csv",...)[-1,]
+time = data[[1]]$DTIME
+```
+
+
+```
+Questions:
+
+1.	Report the syntax you used for skip and na.strings
+
+2.	Make at least one 'sanity check' plot of the data vs. time to ensure that the data was read correctly. Focus this check on either soil moisture or soil temperature (or both!). Include these plots in your lab report. Make sure the axes are labeled and have units and the plot has a title that indicates what site and variable were plotted.
+```
+
+Now that we've read in the raw data we will then extract the relevant variables to a list 'd' that's organized exactly the same way as the list 'm' is
+
+```{r}
+d <- list()
+d[[1]] <- data[[1]]$SWC1/100
+d[[2]] <- data[[1]]$SWC2/100
+d[[3]] <- data[[2]]$SWC1/100
+d[[4]] <- data[[2]]$SWC2/100
+d[[5]] <- data[[1]]$TS1
+d[[6]] <- data[[1]]$TS2
+d[[7]] <- data[[2]]$TS1
+d[[8]] <- data[[2]]$TS2
+names(d) = names(m)
+```
+
+In the above code you'll see that we convert soil water content from percent to proportion so that the model and data are working in the same units. Not shown is that the model soil temperature was converted from Kelvin to Celsius to be in the same units as the data. Unit conversions are important to perform before assessing model performance.
+
+Now that we've loaded the data let’s start with some basic graphical analyses. The most common such plot is just a plot of model vs. data. To this plot we'll add a 1:1 line (solid blue) as well as the regression line (dashed red) between the model and the data. We'll save the results of these regressions in the list 'fit' for later use. You’ll want to make sure that the plotted regression line makes sense on the figures. Also note that the code below will create 8 figures.
+
+```{r}
+## Model vs Data
+par(mfrow=c(2,2)) #change to plot to 2x2 grid
+fit = list()
+for(i in 1:8){
+  plot(m[[i]],d[[i]],pch=".",cex=2,
+  main=names(m)[i],sub=units[i],ylab="Data",xlab="Model")
+  abline(0,1,col=3,lwd=3)
+  ## regression
+  fit[[i]] <- lm(d[[i]]~m[[i]])
+  abline(fit[[i]],col=2,lty=2,lwd=3)
+}
+par(mfrow=c(1,1)) #return to single plot
+```
+
+```
+Questions:
+
+3.	Which variable is the model better at predicting? Within each variable does the model do better at one depth vs. the other? At one site vs. the other? For each of the two variables are there consistent patterns to the model error (and if so what are they) or is the error random?
+
+```
+
+The next most common diagnostic is to plot the model and data both against another variable. For dynamic models plots versus time are a common first choice, but as you dive deeper into diagnosing model behavior it is often useful to compare model and data responses to other variables, such as the model drivers or other response variables. For example, if we were looking at evaporation then we might plot evaporation against factors that affect the flux, such as soil moisture, soil temperature, air temperature, air humidity, and windspeed.
+
+
+```{r}
+## Model and Data vs time
+for(i in 1:8){
+  plot(time,d[[i]],ylab=units[i],main=names(m)[i],
+       type='l',lwd=2,ylim=range(c(d[[i]],m[[i]]),na.rm=TRUE))
+  lines(time,m[[i]],col=2,lwd=2)
+  legend("topright",legend=c("Data","Model"),col=1:2,lwd=2)
+}
+```
+
+Based on these figures we can diagnose additional patterns in the error that may not have been apparent from the model vs. data plots. Based on these patterns, our understanding of the process, and our understanding of the site we are modeling we can begin to pose hypotheses about what is driving model error. For example, if at Willow Creek, a mature deciduous forest site, and the model did a good job of predicting soil temperature in the winter, but was always too cool in the summer, we might hypothesize that we were modeling the forest as too shady. From this hypothesis we could predict how reducing the amount of leaves would impact the model outputs (e.g. reducing leaves will increase light hitting the soil which will increase soil temperature). We would also want to predict the responses of OTHER variables to this hypothesis to see if diagnostic plots of other variables could confirm or deny your hypothesis. For example, if leaf area is too high then we would also predict that transpiration and photosynthesis (GPP) would be too high. Our prediction for the response of soil moisture to leaf area might be ambiguous because the lower Tsoil would reduce evaporation, but the increase in transpiration would cause roots to remove more moisture, so we might not be able to anticipate the net impact. Finally, based on these hypotheses and predictions we might conduct a model experiment to confirm or reject this hypothesis (e.g. running a sensitivity analysis on model responses to changes in leaf area). We would also look for additional data on leaf area in order to confirm our hypothesis – a 'fix' to a model that gets the right answer for the wrong reason is unlikely to be of much use.
+
+```
+Questions:
+4.	Describe one pattern of error in soil moisture
+5.	Describe one pattern of error in soil temperature
+6.	Generate a hypothesis about what might be driving one of these errors. Make a prediction about how the model would respond if your hypothesis is true.
+7.	Propose a "model experiment" to test this hypothesis.
+```
+
+In addition to graphical diagnostics it is often useful to also look at quantitative metrics of model performance. Below we calculate a number of common metrics, such as root mean square error (RMSE), model-data correlation, model bias, the slope of the regression between the model and the data, and the R2 of that regression. You can see that for the last two we extract this information from the results of the regression analyses performed earlier. The other metrics are computed directly on the model outputs and data.
+
+```{r}
+## Model-Data statistics
+########################
+
+slope = bias = r2 = corr = rmse = rep(NA,8)
+for(i in 1:8){
+  ## RMSE
+  rmse[i] = sqrt(mean((d[[i]]-m[[i]])^2,na.rm=TRUE))
+  ## Correlation
+  corr[i] = cor(d[[i]],m[[i]],use = "complete.obs")
+  ## bias
+  bias[i] = mean(d[[i]]-m[[i]],na.rm=TRUE)
+  ##slope
+  slope[i] = coef(fit[[i]])[2]
+  ## R-squared
+  r2[i] = summary(fit[[i]])$r.squared
+}
+
+## organize results into a table
+stats <- cbind(names(m),rmse,corr,bias,slope,r2)
+stats
+```
+
+```
+Questions:
+8.	Take a look at the table of model statistics we just generated. Describe where the quantitative assessment of model performance is consistent with your graphical assessment in Q3 and where the quantitative assessment caused you to alter your perception of model performance by variable, site, or depth.
+9.	Which metrics are indicators of model accuracy vs. precision? Which assess differences vs. trends?
+```
+
+The final model diagnostic we'll look at is a Taylor diagram. This diagram combines the model correlation, the RMSE, and the ratio of model variance to data variance into one diagnostic chart. In the combined chart below we normalize the results so that the data is defined to have a standard deviation of one. In the Taylor diagram the data always resides on the x-axis because it is perfectly correlated with itself. The different angular rays indicate different levels of correlation, while the radial arcs indicate the standard deviation of the model output. A value above the arc of the data indicates that the model output is more variable than the data. Finally, the arcs around the data itself indicates different errors (RMSE). 
+
+
+```{r}
+## Individual Taylor diagrams
+for(i in 1:8){
+  sel <- which(!is.na(d[[i]]))
+  taylor.diagram(d[[i]][sel],m[[i]][sel],ref.sd = TRUE)
+}
+
+## Combined Taylor Diagram
+for(i in 1:8){
+  sel <- which(!is.na(d[[i]]))
+  taylor.diagram(d[[i]][sel],m[[i]][sel],ref.sd = TRUE,normalize = TRUE,add= i>1 ,col=i)
+}
+legend("topright",legend=names(m),col=1:8,pch=16,bg="white")
+```
+
+```
+Questions:
+10.	Which point does not show up on the combined plot and why?
+11.	Does the model tend to overpredict or underpredict the true variability in the system?
+12.	Describe and interpret the clusters of points on the combined Taylor diagram.
+```
+
+
