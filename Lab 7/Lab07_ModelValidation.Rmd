@@ -38,8 +38,8 @@ In the code below, the final bit of code [-1,] removes the first row from the ma
 
 ```{r}
 data <- list()
-data[[1]] <- read.csv("AMF_USWCr_2002_L2_WG_V004.csv",...)[-1,]
-data[[2]] <- read.csv("AMF_USSyv_2002_L2_WG_V003.csv",...)[-1,]
+data[[1]] <- read.csv("AMF_USWCr_2002_L2_WG_V004.csv",skip=18, na.strings = -9999)[-1,]
+data[[2]] <- read.csv("AMF_USSyv_2002_L2_WG_V003.csv",skip = 18,na.strings = -9999)[-1,]
 time = data[[1]]$DTIME
 ```
 
@@ -49,8 +49,20 @@ Questions:
 
 1.	Report the syntax you used for skip and na.strings
 
+data[[1]] <- read.csv("AMF_USWCr_2002_L2_WG_V004.csv",skip=18, na.strings = -9999)[-1,]
+data[[2]] <- read.csv("AMF_USSyv_2002_L2_WG_V003.csv",skip = 18,na.strings = -9999)[-1,]
+
 2.	Make at least one 'sanity check' plot of the data vs. time to ensure that the data was read correctly. Focus this check on either soil moisture or soil temperature (or both!). Include these plots in your lab report. Make sure the axes are labeled and have units and the plot has a title that indicates what site and variable were plotted.
 ```
+
+```{r}
+titles = c("V004","V003")
+
+for(i in 1:2){
+  plot(time, data[[i]]$TS1, xlab = "Time", ylab = "Soil Temperature (C)", pch = 16, cex = 0.2, main = titles[i])
+}
+```
+
 
 Now that we've read in the raw data we will then extract the relevant variables to a list 'd' that's organized exactly the same way as the list 'm' is
 
