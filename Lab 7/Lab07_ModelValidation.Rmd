@@ -105,6 +105,8 @@ Questions:
 
 ```
 
+
+
 The next most common diagnostic is to plot the model and data both against another variable. For dynamic models plots versus time are a common first choice, but as you dive deeper into diagnosing model behavior it is often useful to compare model and data responses to other variables, such as the model drivers or other response variables. For example, if we were looking at evaporation then we might plot evaporation against factors that affect the flux, such as soil moisture, soil temperature, air temperature, air humidity, and windspeed.
 
 
