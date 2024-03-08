@@ -38,8 +38,13 @@ In the code below, the final bit of code [-1,] removes the first row from the ma
 
 ```{r}
 data <- list()
-data[[1]] <- read.csv("AMF_USWCr_2002_L2_WG_V004.csv",skip=18, na.strings = -9999)[-1,]
-data[[2]] <- read.csv("AMF_USSyv_2002_L2_WG_V003.csv",skip = 18,na.strings = -9999)[-1,]
+data[[1]] <- read.csv("AMF_USWCr_2002_L2_WG_V004.csv",skip=18, na.strings = "#NA")[-1,]
+data[[2]] <- read.csv("AMF_USSyv_2002_L2_WG_V003.csv",skip = 18, na.strings = "#NA")[-1,]
+
+# Chat GPT
+data[[1]][data[[1]] == -9999 | data[[1]] == -6999] <- NA
+data[[2]][data[[2]] == -9999 | data[[2]] == -6999] <- NA
+
 time = data[[1]]$DTIME
 ```
 
@@ -49,8 +54,12 @@ Questions:
 
 1.	Report the syntax you used for skip and na.strings
 
-data[[1]] <- read.csv("AMF_USWCr_2002_L2_WG_V004.csv",skip=18, na.strings = -9999)[-1,]
-data[[2]] <- read.csv("AMF_USSyv_2002_L2_WG_V003.csv",skip = 18,na.strings = -9999)[-1,]
+data[[1]] <- read.csv("AMF_USWCr_2002_L2_WG_V004.csv",skip=18, na.strings = "#NA")[-1,]
+data[[2]] <- read.csv("AMF_USSyv_2002_L2_WG_V003.csv",skip = 18, na.strings = "#NA")[-1,]
+
+# Chat GPT
+data[[1]][data[[1]] == -9999 | data[[1]] == -6999] <- NA
+data[[2]][data[[2]] == -9999 | data[[2]] == -6999] <- NA
 
 2.	Make at least one 'sanity check' plot of the data vs. time to ensure that the data was read correctly. Focus this check on either soil moisture or soil temperature (or both!). Include these plots in your lab report. Make sure the axes are labeled and have units and the plot has a title that indicates what site and variable were plotted.
 ```
