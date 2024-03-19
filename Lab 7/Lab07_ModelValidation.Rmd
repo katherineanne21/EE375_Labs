@@ -114,7 +114,7 @@ Questions:
 
 ```
 
-The model seems to predict the temperature of the soil better. This is because the green and red lines are closer together on those plots.
+The model seems to predict the temperature of the soil better. This is because the green and red lines are closer together on those plots. Across all variables, depth 2 is a better predictor. It seems to me that the Sylvania location is better at predicting accurate values. Since the red line in the water content graphs is roughly the same, the error is consistently horizontal. Since the red line in the water content graphs is roughly the same, the error is consistently horizontal. Since the red line in the soil temperature graphs is roughly the same, the error is consistently similar to the green line.
 
 The next most common diagnostic is to plot the model and data both against another variable. For dynamic models plots versus time are a common first choice, but as you dive deeper into diagnosing model behavior it is often useful to compare model and data responses to other variables, such as the model drivers or other response variables. For example, if we were looking at evaporation then we might plot evaporation against factors that affect the flux, such as soil moisture, soil temperature, air temperature, air humidity, and windspeed.
 
@@ -134,9 +134,21 @@ Based on these figures we can diagnose additional patterns in the error that may
 ```
 Questions:
 4.	Describe one pattern of error in soil moisture
+
+The model seems to be under estimating these values. The model is often below the actual data.
+
 5.	Describe one pattern of error in soil temperature
+
+The model seems to be under estimating these values at the start and the end of the run.
+
 6.	Generate a hypothesis about what might be driving one of these errors. Make a prediction about how the model would respond if your hypothesis is true.
+
+The model may be predicting much lower soil moistures because the soil is more rocky than anticipated. A rocky soil doesn't have the ability to absorb as much water meaning the soil moisture will be lower. If I am correct the model will decrease if we change the soil characteristics input in our model.
+
 7.	Propose a "model experiment" to test this hypothesis.
+
+I would research a way to include soil texture in my model. I could either find out that the soil was lower absorbtion was higher or lower. If it is lower than the soil was more rocky than the intitial. If it was higher than the soil was less rocky than the initial.
+
 ```
 
 In addition to graphical diagnostics it is often useful to also look at quantitative metrics of model performance. Below we calculate a number of common metrics, such as root mean square error (RMSE), model-data correlation, model bias, the slope of the regression between the model and the data, and the R2 of that regression. You can see that for the last two we extract this information from the results of the regression analyses performed earlier. The other metrics are computed directly on the model outputs and data.
@@ -167,7 +179,15 @@ stats
 ```
 Questions:
 8.	Take a look at the table of model statistics we just generated. Describe where the quantitative assessment of model performance is consistent with your graphical assessment in Q3 and where the quantitative assessment caused you to alter your perception of model performance by variable, site, or depth.
+
+Previously I found graphicly that the model seems to predict the temperature of the soil better. This is true because the corr is much closer to 1 or -1 for all TS values than SWC. Previously I found graphicly that across all variables, depth 2 is a better predictor. This is true because the corr is much closer to 1 or -1 for all d2 values than d1. Previously I found graphicly that the Sylvania location is better at predicting accurate values. The corr values don't show much of a correlation between accuracy and site.
+
+
 9.	Which metrics are indicators of model accuracy vs. precision? Which assess differences vs. trends?
+
+Accuracy vs Precision: RMSE and Corr
+Differences vs Trends: Bias, slope, r^2
+
 ```
 
 The final model diagnostic we'll look at is a Taylor diagram. This diagram combines the model correlation, the RMSE, and the ratio of model variance to data variance into one diagnostic chart. In the combined chart below we normalize the results so that the data is defined to have a standard deviation of one. In the Taylor diagram the data always resides on the x-axis because it is perfectly correlated with itself. The different angular rays indicate different levels of correlation, while the radial arcs indicate the standard deviation of the model output. A value above the arc of the data indicates that the model output is more variable than the data. Finally, the arcs around the data itself indicates different errors (RMSE). 
@@ -191,8 +211,17 @@ legend("topright",legend=names(m),col=1:8,pch=16,bg="white")
 ```
 Questions:
 10.	Which point does not show up on the combined plot and why?
+
+WCr SWC d1 is not on the plot. This is because it has a negative correlation.
+
 11.	Does the model tend to overpredict or underpredict the true variability in the system?
+
+For almost every site, depth, and variable the bias is positive. This means that the true variablity was an overprediction.
+
 12.	Describe and interpret the clusters of points on the combined Taylor diagram.
+
+These inidicate similar standard deviations and correlations. This means that they are statistically similar.
+
 ```
 
 
