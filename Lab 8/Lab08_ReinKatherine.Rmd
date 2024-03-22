@@ -1,0 +1,21 @@
+---
+title: "Lab08_ReinKatherine"
+output: html_document
+date: "2024-03-22"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Step 1: Data import and processing
+
+```{r}
+data <- read.csv("World_Development_Indicators.csv", na.strings = "#N/A")
+```
+
+## Step 2: Hypotheses generation
+
+
+
+
