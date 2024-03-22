@@ -12,10 +12,111 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 data <- read.csv("World_Development_Indicators.csv", na.strings = "#N/A")
+CO2 = data[,"EN.ATM.CO2E.PC"]
 ```
 
 ## Step 2: Hypotheses generation
 
+1. GDP per capita (current US$)
+
+This one will most likely be positively correlated, as we discussed in class. More money means you are able to spend more on things that emit heavily.
+
+2. Pump price for gasoline (US$ per liter)
+
+This one will most likely be negatively correlated. The higher price of gas would mean people wouldn't want to use a lot of gas meaning CO2 emissions will be lower.
+
+3. Terrestrial and marine protected areas (% of total territorial area)
+
+This one will most likely have a negative correlation. The more area that is protected means that factories or other big emitters can't be on that land.
+
+4. Population density (people per sq. km of land area)
+
+This one will most likely be positively correlated. The more people the more carbon they can emit.
+
+5. Average precipitation in depth (mm per year)
+
+This one will most likely be positively correlated. Carbon emissions can cause a higher amounts of rainfall.
+
+6. Arable land (hectares per person)
+
+This one will most likely have a negative correlation. The more area that is used for farming means that factories or other big emitters can't be on that land.
+
+## Step 3: Exploratory data analysis
+
+```{r}
+
+# Create vectors of actual column names and what we want the variable names to be
+xlabel_names = c("GDP","Gas Price","Protected Areas","Population Density",
+                   "Precipitation", "Arable Land")
+column_names = c("NY.GDP.PCAP.CD", "EP.PMP.SGAS.CD", "ER.PTD.TOTL.ZS", "EN.POP.DNST",
+                  "AG.LND.PRCP.MM", "AG.LND.ARBL.HA.PC")
+
+# Pull Out data from dataframe for each variable
+GDP = data[,"NY.GDP.PCAP.CD"]
+GasPrice = data[,"EP.PMP.SGAS.CD"]
+ProtectedAreas = data[,"ER.PTD.TOTL.ZS"]
+PopDens = data[,"EN.POP.DNST"]
+Precipitation = data[,"AG.LND.PRCP.MM"]
+ArableLand = data[,"AG.LND.ARBL.HA.PC"]
+
+
+# Graph each variable
+for (i in 1:6){
+  xvariable = column_names[i]
+  x_label = xlabel_names[i]
+  
+  plot(data[,xvariable], CO2, ylab = "Carbon Emissions", xlab = x_label, main = 
+         paste(x_label, "vs Carbon Emissions"))
+  
+  # Fit a linear regression model
+  lm_model <- lm(CO2 ~ data[, xvariable])
+  
+  # Add the line of best fit to the plot
+  abline(lm_model, col = "red")
+}
+```
+Precipitation seems to be exponentially related with carbon.
+
+```{r}
+# Create table of correlation values
+print("***GDP***")
+cor(GDP, CO2, use = "complete.obs")
+fit_GDP = lm(formula = EN.ATM.CO2E.PC ~ NY.GDP.PCAP.CD, data = data)
+summary(fit_GDP)
+
+print("***Gas Price***")
+cor(GasPrice, CO2, use = "complete.obs")
+fit_GasPrice = lm(formula = EN.ATM.CO2E.PC ~ EP.PMP.SGAS.CD, data = data)
+summary(fit_GasPrice)
+
+print("***Protected Areas***")
+cor(ProtectedAreas, CO2, use = "complete.obs")
+fit_ProtectedAreas = lm(formula = EN.ATM.CO2E.PC ~ ER.PTD.TOTL.ZS, data = data)
+summary(fit_ProtectedAreas)
+
+print("***Population Density***")
+cor(PopDens, CO2, use = "complete.obs")
+fit_PopDens = lm(formula = EN.ATM.CO2E.PC ~ EN.POP.DNST, data = data)
+summary(fit_PopDens)
+
+print("***Precipiation***")
+cor(Precipitation, CO2, use = "complete.obs")
+fit_Precipitation = lm(formula = EN.ATM.CO2E.PC ~ AG.LND.PRCP.MM, data = data)
+summary(fit_Precipitation)
+
+print("***Arable Land***")
+cor(ArableLand, CO2, use = "complete.obs")
+fit_ArableLand = lm(formula = EN.ATM.CO2E.PC ~ AG.LND.ARBL.HA.PC, data = data)
+summary(fit_ArableLand)
+
+```
+
+GDP: Yes, I said that they would be positively correlated and they were.
+Gas Price: Yes, I said that they would be negatively correlated and they were.
+Protected Areas: No, I said negative and there's a very small positive correlation.
+Pop Dens: Yes, I said positive and there's a very small positive correlation.
+Precipitation: No, I said positive 
+Arable Land:
 
 
 
