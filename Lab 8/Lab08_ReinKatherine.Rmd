@@ -46,12 +46,16 @@ This one will most likely have a negative correlation. The more area that is use
 ```{r}
 
 # Create vectors of actual column names and what we want the variable names to be
-xlabel_names = c("GDP","Gas Price","Protected Areas","Population Density",
-                   "Precipitation", "Arable Land")
+xlabel_names = c("GDP (current US$)","Gas Price (US$ per liter)",
+                 "Protected Areas (% of total territorial area)",
+                 "Population Density (people per sq. km of land area)",
+                 "Precipitation (mm per year)", "Arable Land (hectares per person)")
+title_names =  c("GDP","Gas Price", "Protected Areas", "Population Density",
+                 "Precipitation", "Arable Land")
 column_names = c("NY.GDP.PCAP.CD", "EP.PMP.SGAS.CD", "ER.PTD.TOTL.ZS", "EN.POP.DNST",
                   "AG.LND.PRCP.MM", "AG.LND.ARBL.HA.PC")
 
-# Pull Out data from dataframe for each variable
+# Pull Out data from data frame for each variable
 GDP = data[,"NY.GDP.PCAP.CD"]
 GasPrice = data[,"EP.PMP.SGAS.CD"]
 ProtectedAreas = data[,"ER.PTD.TOTL.ZS"]
@@ -64,21 +68,24 @@ ArableLand = data[,"AG.LND.ARBL.HA.PC"]
 for (i in 1:6){
   xvariable = column_names[i]
   x_label = xlabel_names[i]
+  title = title_names[i]
   
-  plot(data[,xvariable], CO2, ylab = "Carbon Emissions", xlab = x_label, main = 
-         paste(x_label, "vs Carbon Emissions"))
+  plot(data[,xvariable], CO2, ylab = "Carbon Emissions (metric tons per capita)", 
+       xlab = x_label, main = paste(title, "vs Carbon Emissions"), pch = 19, cex = 0.7)
   
-  # Fit a linear regression model
+  # Line of best fit
   lm_model <- lm(CO2 ~ data[, xvariable])
-  
-  # Add the line of best fit to the plot
   abline(lm_model, col = "red")
+  
+  # Legend
+  legend("topright", legend = "Line of Best Fit", col = "red", lty = 1)
+  
 }
 ```
 Precipitation seems to be exponentially related with carbon.
 
 ```{r}
-# Create table of correlation values
+# Correlation Values/Regression Stats
 print("***GDP***")
 cor(GDP, CO2, use = "complete.obs")
 fit_GDP = lm(formula = EN.ATM.CO2E.PC ~ NY.GDP.PCAP.CD, data = data)
@@ -115,8 +122,16 @@ GDP: Yes, I said that they would be positively correlated and they were.
 Gas Price: Yes, I said that they would be negatively correlated and they were.
 Protected Areas: No, I said negative and there's a very small positive correlation.
 Pop Dens: Yes, I said positive and there's a very small positive correlation.
-Precipitation: No, I said positive 
-Arable Land:
+Precipitation: No, I said positive but it ended up being negative.
+Arable Land: No, I said negative and there's a very small positive correlation.
 
 
+## Step 4: Univariate analyses
 
+Number 7:
+
+Using a P value cut off of 0.05, I would remove arable land, population density, and protected areas. All of these had p values greater than 0.05 meaning their null hypothesis that the coefficient is 0 is unable to be rejected with 95% certainty.
+
+Number 8:
+
+I would assume GDP because it contains the highest adjusted R squared. 
