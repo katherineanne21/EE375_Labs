@@ -8,12 +8,192 @@ date: "2024-03-29"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Questions
+
+- Need to understand 7
+- Very confused on 8
+
 
 ## Import Data
 
 ```{r}
 data <- read.csv("World_Development_Indicators.csv", na.strings = "#N/A")
+
+# Clean Data
+new_labels = c("Country.Code","CO2","GDP","GasPrice", "ProtectedAreas", "PopulationDensity",
+                 "Precipitation", "ArableLand")
+column_names = c("Country.Code","EN.ATM.CO2E.PC", "NY.GDP.PCAP.CD", "EP.PMP.SGAS.CD", "ER.PTD.TOTL.ZS",
+                 "EN.POP.DNST", "AG.LND.PRCP.MM", "AG.LND.ARBL.HA.PC")
+
+data <- data[,column_names]
+names(data) <- new_labels
 ```
 
+## Step 5: Check for Colinearity
+
+```{r}
+xvariables = c("GDP","GasPrice", "ProtectedAreas", "PopulationDensity",
+                 "Precipitation", "ArableLand")
+pairs_sub = data[,xvariables]
+
+pairs(pairs_sub)
+cor(pairs_sub, use = "pairwise.complete.obs")
+
+data2 = na.omit(data[,c("Country.Code", "CO2", xvariables)])
+```
+
+The only two x variables that seem correlated even slightly are GDP and Population Density. However, visually they don't look correlated so I will keep them both in.
+
+## Step 6: Multivariate analyses and model selection
+
+```{r}
+## 1 Variable
+# From Lab 8
+fit_GDP = lm(CO2 ~ GDP, data2)
+summary(fit_GDP)
+our_aic = AIC(fit_GDP)
+print(our_aic)
+```
+```{r}
+## 2 Variables
+
+# Gas Price
+fit_GDP_Gas = lm(CO2 ~ GDP + GasPrice,data2)
+summary(fit_GDP_Gas)
+our_aic = AIC(fit_GDP_Gas)
+print(our_aic)
+
+# Protected Areas
+fit_GDP_PA = lm(CO2 ~ GDP + ProtectedAreas,data2)
+summary(fit_GDP_PA)
+our_aic = AIC(fit_GDP_PA)
+print(our_aic)
+
+# Population Density
+fit_GDP_PD = lm(CO2 ~ GDP + PopulationDensity,data2)
+summary(fit_GDP_PD)
+our_aic = AIC(fit_GDP_PD)
+print(our_aic)
+
+# Precipitation
+fit_GDP_Prec = lm(CO2 ~ GDP + Precipitation,data2)
+summary(fit_GDP_Prec)
+our_aic = AIC(fit_GDP_Prec)
+print(our_aic)
+
+# Arable Land
+fit_GDP_AL = lm(CO2 ~ GDP + ArableLand,data2)
+summary(fit_GDP_AL)
+our_aic = AIC(fit_GDP_AL)
+print(our_aic)
+
+```
+```{r}
+## 3 Variables
+
+# GDP, Gas Price, Protected Areas
+fit_GDP_Gas_PA = lm(CO2 ~ GDP + GasPrice + ProtectedAreas,data2)
+summary(fit_GDP_Gas_PA)
+our_aic = AIC(fit_GDP_Gas_PA)
+print(our_aic)
+
+# GDP, Gas Price, Population Density
+fit_GDP_Gas_PD = lm(CO2 ~ GDP + GasPrice + PopulationDensity,data2)
+summary(fit_GDP_Gas_PD)
+our_aic = AIC(fit_GDP_Gas_PD)
+print(our_aic)
+
+# GDP, Gas Price, Precipitation
+fit_GDP_Gas_Prec = lm(CO2 ~ GDP + GasPrice + Precipitation,data2)
+summary(fit_GDP_Gas_Prec)
+our_aic = AIC(fit_GDP_Gas_Prec)
+print(our_aic)
+
+# GDP, Gas Price, Arable Land
+fit_GDP_Gas_AL = lm(CO2 ~ GDP + GasPrice + ArableLand,data2)
+summary(fit_GDP_Gas_AL)
+our_aic = AIC(fit_GDP_Gas_AL)
+print(our_aic)
+
+```
+```{r}
+## 4 Variables
+
+# GDP, Gas Price, Arable Land, Protected Areas
+fit_GDP_Gas_AL_PA = lm(CO2 ~ GDP + GasPrice + ArableLand + ProtectedAreas,data2)
+summary(fit_GDP_Gas_AL_PA)
+our_aic = AIC(fit_GDP_Gas_AL_PA)
+print(our_aic)
+
+# GDP, Gas Price, Arable Land, Population Density
+fit_GDP_Gas_AL_PD = lm(CO2 ~ GDP + GasPrice + ArableLand + PopulationDensity,data2)
+summary(fit_GDP_Gas_AL_PD)
+our_aic = AIC(fit_GDP_Gas_AL_PD)
+print(our_aic)
+
+# GDP, Gas Price, Arable Land, Precipitation
+fit_GDP_Gas_AL_Prec = lm(CO2 ~ GDP + GasPrice + ArableLand + Precipitation,data2)
+summary(fit_GDP_Gas_AL_Prec)
+our_aic = AIC(fit_GDP_Gas_AL_Prec)
+print(our_aic)
+
+```
+
+```{r}
+## 5 Variables
+
+# GDP, Gas Price, Arable Land, Precipitation, Protected Areas
+fit_GDP_Gas_PD_Prec_PA = lm(CO2 ~ GDP + GasPrice + ArableLand + Precipitation + ProtectedAreas ,data2)
+summary(fit_GDP_Gas_PD_Prec_PA)
+our_aic = AIC(fit_GDP_Gas_PD_Prec_PA)
+print(our_aic)
+
+# GDP, Gas Price, Arable Land, Precipitation, Population Density
+fit_GDP_Gas_PD_Prec_PD = lm(CO2 ~ GDP + GasPrice + ArableLand + Precipitation + PopulationDensity,data2)
+summary(fit_GDP_Gas_PD_Prec_PD)
+our_aic = AIC(fit_GDP_Gas_PD_Prec_PD)
+print(our_aic)
+
+```
+
+```{r}
+## Best Model
+
+AICtable = data.frame(model = 1:5, AIC = c(AIC(fit_GDP), AIC(fit_GDP_Gas), AIC(fit_GDP_Gas_AL),
+                                           AIC(fit_GDP_Gas_AL_Prec), 
+                                           AIC(fit_GDP_Gas_PD_Prec_PA)))
+
+AICtable$dAIC = AICtable$AIC - min(AICtable$AIC)
+
+knitr::kable(AICtable)
+
+```
+
+
+Choosing the best model from this analysis is a bit confusing. My best model when looking at AIC is a 4 variable model that uses GDP, Gas Price, Arable Land, and Precipitation. However, Arable Land and Precipitation are not statistically significant based on their p values. Personally, I would choose the 4 variable model but it is still just as good of a choice to use the 2 variable model.
+
+## Step 7: Model Assessment
+
+```{r}
+# Best Model: fit_GDP_Gas_AL_Prec
+
+## Predicted vs Observed
+
+plot(predict(fit_GDP_Gas_AL_Prec),data2$CO2, pch = 19, cex = 0.7, xlab = "Predicted Values", ylab = "Observed Values", main = "Observed vs. Predicted CO2 Values")
+
+# Add a 1:1 line
+abline(a = 0, b = 1, col = "red")
+
+## Diagnostic Plots
+
+plot(fit_GDP_Gas_AL_Prec)
+
+```
+
+## Step 8: Making PredicJons
+
+```{r}
+
+```
 
 
