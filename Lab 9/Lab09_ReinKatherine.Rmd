@@ -190,7 +190,7 @@ plot(fit_GDP_Gas_AL_Prec)
 
 ```
 
-## Step 8: Making PredicJons
+## Step 8: Making Predictions
 
 ```{r}
 
