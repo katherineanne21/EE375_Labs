@@ -189,10 +189,74 @@ abline(a = 0, b = 1, col = "red")
 plot(fit_GDP_Gas_AL_Prec)
 
 ```
+Based on the predicted vs observed graph, my model is good. The predicted and observed values are colinear. This means that the values I predicted are similar to the observed values.
+
+Based on the Q-Q plot, the model behaves similarly to a normal distribution. This is because it is mostly along the dotted line. 
+
 
 ## Step 8: Making Predictions
 
 ```{r}
+# Best Model: fit_GDP_Gas_AL_Prec
+# Univariate Model: fit_GDP
+
+## Univariate
+# CI and PI
+Tpred = data.frame(GDP=seq(0,200000, by = 10000))
+
+CI = as.data.frame(predict(fit_GDP,newdata = Tpred,interval="confidence"))
+PI = as.data.frame(predict(fit_GDP,newdata = Tpred,interval="prediction")) 
+
+# Graph
+plot(data2$GDP,data2$CO2, xlab = "GDP", ylab = "CO2", main = "GDP vs CO2", pch = 19, cex = 0.7)
+
+abline(fit_GDP,col=2,lwd=4)
+
+lines(Tpred$GDP,CI$lwr,col=2,lty=2)
+lines(Tpred$GDP,CI$upr,col=2,lty =2)
+
+lines(Tpred$GDP,PI$lwr,col=4,lty=2,lwd=3)
+lines(Tpred$GDP,PI$upr,col=4,lty=2,lwd=3)
+
+legend("topleft",
+       legend = c("Regression Line", "95% Confidence Interval", "95% Prediction Interval"),
+       col = c(2, 2, 4),
+       lty = c(1, 2, 2),
+       lwd = c(4, 1, 3))
+
+## Multivariate
+# CI and PI
+country = "DNK"
+years = 1:25
+r = 0.1 # % per year
+AL = data2[data2$Country.Code == country, "ArableLand"]
+
+Tpred1 = data.frame(GDP = rep(data2$GDP[data2$Country.Code == country], 25),
+                    GasPrice = rep(data2$GasPrice[data2$Country.Code == country], 25),
+                    Precipitation = rep(data2$Precipitation[data2$Country.Code == country], 25),
+                    ArableLand = AL*(1+r)^years
+)
+
+CI1 = as.data.frame(predict(fit_GDP_Gas_AL_Prec,newdata = Tpred1,interval="confidence"))
+PI1 = as.data.frame(predict(fit_GDP_Gas_AL_Prec,newdata = Tpred1,interval="prediction")) 
+
+# Graph
+plot(data2$ArableLand,data2$CO2, xlab = "Arable Land", ylab = "CO2", main = "Arable Land vs CO2", pch = 19, cex = 0.7)
+
+abline(fit_GDP_Gas_AL_Prec,col=2,lwd=4)
+
+lines(Tpred1$ArableLand,CI1$lwr,col=2,lty=2)
+lines(Tpred1$ArableLand,CI1$upr,col=2,lty =2)
+
+lines(Tpred1$ArableLand,PI1$lwr,col=4,lty=2,lwd=3)
+lines(Tpred1$ArableLand,PI1$upr,col=4,lty=2,lwd=3)
+
+legend("topleft",
+       legend = c("Regression Line", "95% Confidence Interval", "95% Prediction Interval"),
+       col = c(2, 2, 4),
+       lty = c(1, 2, 2),
+       lwd = c(4, 1, 3))
+
 
 ```
 
