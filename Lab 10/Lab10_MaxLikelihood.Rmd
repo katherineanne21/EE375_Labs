@@ -72,7 +72,7 @@ Ci = dat$Ci        ## CO2 concentration in the leaf
 Ca = dat$CO2R      ## CO2 concentration in the chamber
 Ao = dat$Photo     ## Observed net Assimilation (photosynthetic rate)
 
-## sort the data in order for convinence
+## sort the data in order for convenience
 ord = order(Ci)
 Ci = Ci[ord]
 Ca = Ca[ord]
@@ -83,6 +83,13 @@ Ao = Ao[ord]
 ### Question 1
 
 Make a plot of $A^{(o)}$ as a function of $C_i$
+
+```{r}
+# Plot Ao and Ci
+
+plot(Ao, Ci, xlab = "Observed Assimilation", ylab = "Internal CO2 Concentration", main = "Assimilation vs CO2", pch = 20, col = "palevioletred")
+```
+
 
 ## FvCB model
 
