@@ -87,7 +87,7 @@ Make a plot of $A^{(o)}$ as a function of $C_i$
 ```{r}
 # Plot Ao and Ci
 
-plot(Ao, Ci, xlab = "Observed Assimilation", ylab = "Internal CO2 Concentration", main = "Assimilation vs CO2", pch = 20, col = "palevioletred")
+plot(Ci, Ao, ylab = "Observed Assimilation", xlab = "Internal CO2 Concentration", main = "Assimilation vs CO2", pch = 20, col = "palevioletred")
 ```
 
 
@@ -130,7 +130,17 @@ Evaluate your lnLike function given your initial parameter guess, and the observ
 
 ```{r}
 # Parameter Guess
-theta = c(450,475,500,525,550)
+Vcmax = max(Ao)
+min_Ci = min(Ci)
+max_Ci = max(Ci)
+r_value = Vcmax/10
+
+Vcmax
+min_Ci
+max_Ci
+r_value
+
+theta = c(13.0890097,139.0550059,91.0700930,-1.3636700,0.3352523)
 
 # Fitting the model
 lnLike_output = lnLike(theta,Ao,Ci)
@@ -142,6 +152,12 @@ lnLike_output
 
 Use the function _optim_ to minimize the negative log Likelihood (i.e. to maximize the Likelihood). Don't forget to pass the additional arguments to lnLike by name (i.e. Ao=Ao,Ci=Ci ) within the optim function call. Save the output from optim to a variable _fit_. Report **and explain** the contents of _fit_.
 
+```{r}
+fit = optim(theta,lnLike,Ao=Ao,Ci=Ci)
+fit
+```
+It took the model 366 steps to converge. With the convergence value of 0, this means the model did converge on a value. This is my best guess based on the max and min values of Ao and Ci. Vcmax is greater than the max Ao. K and cp are between the min Ci and max Ci. R is between 0 and Vcmax/10.
+
 ## Evaluating the model
 
 ### Question 4
@@ -150,12 +166,41 @@ Run the FvCB model with your best fit parameters and save the results to the var
 
 Repeat your plot of the observed data, but this time add lines for the best fit model.
 
+```{r}
+Am = FvCB(theta,Ci)
+Am
+
+plot(Ci, Ao, pch = 20, main = "Observed Data with Best Fit Model")
+lines(Ci, Am)
+lines(Ci,Am + 1.96 * theta[5], col = "red")
+lines(Ci,Am - 1.96 * theta[5], col = "orange")
+
+legend("bottomright", legend = c("Observed Data", "Best Fit Model", "Upper Bound",
+                                 "Lower Bound"),
+       pch = c(20, NA, NA, NA), col = c("black", "black", "red", "orange"),
+       lty = c(NA, 1, 1, 1), lwd = c(NA, 1, 1, 1))
+```
+
 
 ### Question 5
 
 Generate a predicted vs observed plot and include a 1:1 line. Also include the diagnostic regression line between the predicted and observed and save the output of this _lm_ to the variable 'bias.fit'. Make sure to include a legend indicating which line is which.
 
 Overall, how did the model perform?
+
+```{r}
+# Predicted vs Observed
+plot(Am, Ao, pch = 19, cex = 0.7, xlab = "Predicted Values", ylab = "Observed Values", main = "Observed vs. Predicted Values")
+
+# Add a 1:1 line
+abline(a = 0, b = 1, col = "red", lty = 1, lwd = 2)
+
+bias.fit = lm(Ao~Am)
+abline(bias.fit, col = "blue", lty = 2, lwd = 2)
+
+legend("topleft", legend = c("1:1","Regression"), lwd = 2, col = c("red","blue"), lty = 1:2)
+```
+
 
 ### Question 6
 
@@ -167,13 +212,35 @@ Report the $R^2$ and RMSE of the model.
 
 Compare the RMSE to the best fit parameter sigma.
 
+```{r}
+confint(bias.fit)
+
+summary(bias.fit)
+RMSE = sqrt(mean(bias.fit$residuals^2))
+RMSE
+```
+R^2 = 0.9901
+RMSE = 0.3352483
+sigma = 0.3352578
+
+The RMSE and sigma are essentially the same number therefore the maximum likelihood is working.
+
 ### Question 7
 
 Use your standard residual diagnostic plots, applied to bias.fit, to assess to what extent the model meets the assumptions we made (no trend in residuals, Normal distributed error, constant variance)
 
+```{r}
+plot(bias.fit)
+```
+
+
+Our observed data fits within the confidence interval meaning that these assumptions seem to be fine. Additionally, the error is roughly the same. 
+
 ### Extra Credit
 
 What is the most abundant protein on Earth? How does this relate to your findings in this lab?
+
+The most abundant protein on Earth is Rubisco. This is important because it is responsible for most of global carbon fixation. 
 
 ## Citations
 
