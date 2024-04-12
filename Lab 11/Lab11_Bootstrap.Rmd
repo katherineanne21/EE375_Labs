@@ -101,19 +101,53 @@ For each column in theta.boot, calculate a 95% Confidence interval. Do this by _
 
 ```{r}
 
+# Initialize df
+summary_table = data.frame(matrix(NA, nrow = 3, ncol = 5))
+colnames(summary_table) = c("Vcmax","K","cp","r","sigma") 
+rownames(summary_table) = c("CI_lower", "CI_upper", "mean")
+
+for (i in 1:5){
+  # Variable Set Up
+  title = colnames(theta.boot)[i]  # create a variable of what parameter we're looking at
+  CI = quantile(theta.boot[,i],c(0.025,0.975)) # create a vector with the 2.5% and 97.5% CI
+  MLE = mean(theta.boot[,i]) # calculate the mean of the data
+  
+  # Plotting
+  hist(theta.boot[,i], main = title, xlab = title)
+  abline(v = MLE, col = "red", lwd = 2) # mean line
+  abline(v = CI[1], col = "orange", lty = 2, lwd = 2) # lower CI bound
+  abline(v = CI[2], col = "orange", lty = 2, lwd = 2) # upper CI bound
+  
+  # Legend
+  legend("topright", legend = c("Mean", "CI"), col = c( "red", "orange"),
+         lty = c(1, 2), lwd = c(2, 2))
+  
+  # Summary Tables
+  summary_table[1,i] = CI[1]
+  summary_table[2,i] = CI[2]
+  summary_table[3,i] = MLE
+}
+
 ```
 
 
 ### Task 3: Histograms
 
-Plot histograms for each variable. Use the _abline_ function abline to add vertical lines for the Maximum Likelihood Estimate (MLE) and the Confidence Interval.
+Plot histograms for each variable. Use the _abline_ function abline to add vertical lines for the Maximum Likelihood Estimate (MLE) (mean) and the Confidence Interval.
 
 Based on the CI, which parameters are not significantly different from 0?
 
+The only parameter not significantly different than 0 is r. This is because the CI overlaps with 0.
 
 ### Task 4: Summary Table
 
 Create a table that summarizes the MLE, standard deviation, and CI for each parameter. 
+
+```{r}
+# print summary table
+print(summary_table)
+```
+
 
 ### Task 5: Parameter correlations
 
