@@ -137,7 +137,7 @@ Plot histograms for each variable. Use the _abline_ function abline to add verti
 
 Based on the CI, which parameters are not significantly different from 0?
 
-The only parameter not significantly different than 0 is r. This is because the CI overlaps with 0.
+The only parameter not statistically significantly different than 0 is r. This is because the CI overlaps with 0.
 
 ### Task 4: Summary Table
 
