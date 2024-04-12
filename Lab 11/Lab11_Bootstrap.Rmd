@@ -99,6 +99,11 @@ colnames(theta.boot) = c("Vcmax","K","cp","r","sigma")
 
 For each column in theta.boot, calculate a 95% Confidence interval. Do this by _applying_ the function _quantile_ to each column. _quantile_ is a basic summary statistic function, like mean, median, and var, except that it returns the specific quantiles you ask for in a data set. For example, quantile(x,0.5) would return the 50% (median) quantile of x. In this case you'll want to use the 0.025 and 0.975 quantiles in order to exclude the 2.5% most extreme values on each side of the distribution and keep the inner 95%.
 
+```{r}
+
+```
+
+
 ### Task 3: Histograms
 
 Plot histograms for each variable. Use the _abline_ function abline to add vertical lines for the Maximum Likelihood Estimate (MLE) and the Confidence Interval.
