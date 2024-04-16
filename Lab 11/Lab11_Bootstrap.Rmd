@@ -4,10 +4,6 @@ author: "EE 375"
 output: html_document
 ---
 
-## Questions
-
-*Are any of the parameters correlated?*
-*I'm confused on how to do the parametric bootstrapping*
 
 In the previous lab we use Maximum Likelihood to estimate parameters to the Farquhar, von Caemmerer, and Berry (1980) photosynthesis model [FvCB model] using leaf-level data on Aspen collected at the Niwot Ridge LTER site in Colorado. Today we're going to build on that example by looking at ways to estimate the uncertainty in the parameters.
 
@@ -67,7 +63,7 @@ FvCB <- function(theta,Ci){
   Anet = Vcmax*(Ci-cp)/(Ci+K) - r
   return(Anet)
 }
-param = c(10,200,10,1,1)
+param = c(13.0890097,139.0550059,91.0700930,-1.3636700,0.3352523)
 
 lnLike <- function(theta,Ao,Ci){
   sigma = theta[5]
@@ -117,7 +113,7 @@ for (i in 1:5){
   MLE = mean(theta.boot[,i]) # calculate the mean of the data
   
   # Plotting
-  hist(theta.boot[,i], main = title, xlab = title)
+  hist(theta.boot[,i], main = title, xlab = title, breaks = 50)
   abline(v = MLE, col = "red", lwd = 2) # mean line
   abline(v = CI[1], col = "orange", lty = 2, lwd = 2) # lower CI bound
   abline(v = CI[2], col = "orange", lty = 2, lwd = 2) # upper CI bound
@@ -162,10 +158,10 @@ The two ways that we assess parameter correlations are exactly the same as what 
 ** Before proceeding to the next step, save the results so far (e.g. theta.boot) so you don't overwrite them in the next section. You will be asked to compare these results to those below**
 
 ```{r}
-nonpar_cor = cor(theta.boot)
-pairs(nonpar_cor)
+pairs(theta.boot)
 ```
 
+K and Vcmax seem to be highly correlated along with cp and r.
 
 ## Parameteric Bootstrap
 
@@ -182,12 +178,14 @@ After completing these steps you will then have two simulated data sets (e.g. Ci
 
 ```{r}
 nboot = 2000
+n = length(Ci)
+theta = fit$par
 theta.boot = matrix(NA,nboot,5)
 for(i in 1:nboot){
-  samp <- sample(1:length(Ci),length(Ci),replace=TRUE) ### sample 
-  out <- suppressWarnings(optim(fit$par,lnLike,Ao=Ao[samp],Ci=Ci[samp])) ### fit sample 
-  theta.boot[i,] <- out$par  ## save results
-  if(i%%100 == 0) print(i) ## counter. Comment out for knitting
+  Ciboot <- runif(n,0,700)
+  Aboot <- rnorm(n,FvCB(theta,Ciboot), theta[5])
+  out <- suppressWarnings(optim(fit$par, lnLike, Ao = Aboot, Ci = Ciboot))
+  theta.boot[i, ] <- out$par
 }
 colnames(theta.boot) = c("Vcmax","K","cp","r","sigma")  
 ```
@@ -228,15 +226,16 @@ for (i in 1:5){
 # print summary table
 print(summary_table)
 
-par_cor = cor(theta.boot)
-pairs(par_cor)
-
+pairs(theta.boot)
 ```
+
+Vcmax is the correlated with K, cp, and r. K is correlated with cp. r is correlated with cp.
 
 ### Task 8: Comparison
 
 Compare your results from the two approaches
 
+The parametric bootstrap had more correlations than the non-parametric bootstrap. This makes sense as the psuedo data all has the same distribution in a parametric bootstrap. The mean values for Vcmax, K, cp, r, and sigma are higher for some and lower for some between the two methods but are all roughly the same
 
 ### Extra Credit: Power Analysis
 
@@ -245,3 +244,58 @@ To explore what would happen if you could increase your sample size, rerun the p
 Next, for the variable *r* specifically, plot the confidence interval as a function of sample size. In plot set log='x' to put the x-axis on a log scale (since we varied n by factors of 2)
 
 What sample size would be required to be able to distinguish *r* from zero?
+
+```{r}
+n_vector = c(Ci,2*Ci,4*Ci,8*Ci,16*Ci,32*Ci)
+
+for(ii in 1:6){
+  
+  nboot = 2000
+  n = n_vector[ii]
+  theta = fit$par
+  theta.boot = matrix(NA,nboot,5)
+  
+  for(i in 1:nboot){
+    Ciboot <- runif(n,0,700)
+    Aboot <- rnorm(n,FvCB(theta,Ciboot), theta[5])
+    out <- suppressWarnings(optim(fit$par, lnLike, Ao = Aboot, Ci = Ciboot))
+    theta.boot[i, ] <- out$par
+  }
+
+colnames(theta.boot) = c("Vcmax","K","cp","r","sigma")  
+
+# Initialize df
+summary_table = data.frame(matrix(NA, nrow = 3, ncol = 5))
+colnames(summary_table) = c("Vcmax","K","cp","r","sigma") 
+rownames(summary_table) = c("CI_lower", "CI_upper", "mean")
+
+for (i in 1:5){
+  # Variable Set Up
+  title = colnames(theta.boot)[i]  # create a variable of what parameter we're looking at
+  CI = quantile(theta.boot[,i],c(0.025,0.975)) # create a vector with the 2.5% and 97.5% CI
+  MLE = mean(theta.boot[,i]) # calculate the mean of the data
+  
+  # Plotting
+  hist(theta.boot[,i], main = title, xlab = title)
+  abline(v = MLE, col = "red", lwd = 2) # mean line
+  abline(v = CI[1], col = "orange", lty = 2, lwd = 2) # lower CI bound
+  abline(v = CI[2], col = "orange", lty = 2, lwd = 2) # upper CI bound
+  
+  # Legend
+  legend("topright", legend = c("Mean", "CI"), col = c( "red", "orange"),
+         lty = c(1, 2), lwd = c(2, 2))
+  
+  # Summary Tables
+  summary_table[1,i] = CI[1]
+  summary_table[2,i] = CI[2]
+  summary_table[3,i] = MLE
+}
+
+# print summary table
+print(summary_table)
+
+pairs(theta.boot)
+
+}
+```
+
