@@ -37,11 +37,77 @@ The first thing we want to do is to load up the outputs from our previous two an
 ```{r}
 ## Load the data
 
+##' @name read.Licor
+##' @author Mike Dietze
+##' @param filename  name of the file to read
+##' @param sep       file delimiter. defaults to tab
+##' @param ...       optional arguements forwarded to read.table
+read.Licor <- function(filename,sep="\t",...){
+  fbase = sub(".txt","",tail(unlist(strsplit(filename,"/")),n=1))
+  print(fbase)
+  full = readLines(filename)
+  ## remove meta=data
+  start = grep(pattern="OPEN",full)
+  skip = grep(pattern="STARTOFDATA",full)  
+  for(i in length(start):1){
+    full = full[-(start[i]:(skip[i]+1*(i>1)))] # +1 is to deal with second header
+  }
+  full = full[grep("\t",full)]  ## skip timestamp lines
+  dat = read.table(textConnection(full),header = TRUE,blank.lines.skip=TRUE,sep=sep,...)
+  fname=rep(fbase,nrow(dat))
+  dat = as.data.frame(cbind(fname,dat))
+  return(dat)
+}
+
+## Load the data
+dat <- read.Licor("flux-course-3aci")
+
+## grab the variables we need 
+Ci = dat$Ci        ## CO2 concentration in the leaf
+Ca = dat$CO2R      ## CO2 concentration in the chamber
+Ao = dat$Photo     ## Observed net Assimilation (photosynthetic rate)
+
+## sort the data in order for convenience
+ord = order(Ci)
+Ci = Ci[ord]
+Ca = Ca[ord]
+Ao = Ao[ord]
+
 ## Define FvCB and lnLike functions
 
+FvCB <- function(theta,Ci){
+  Vcmax = theta[1]
+  K  = theta[2]
+  cp = theta[3]
+  r  = theta[4]
+  Anet = Vcmax*(Ci-cp)/(Ci+K) - r
+  return(Anet)
+}
+
+lnLike <- function(theta,Ao,Ci){
+  sigma = theta[5]
+  lnL = sum(dnorm(Ao,FvCB(theta,Ci),sigma,log=TRUE))
+  return(-lnL)
+}
+
 ## Fit FvCB's lnLike to data using optim
+theta = c(13.0890097,139.0550059,91.0700930,-1.3636700,0.3352523)
+
+fit = optim(theta,lnLike,Ao=Ao,Ci=Ci)
+fit
 
 ## Perform nonparameteric bootstrap
+
+nboot = 2000
+theta.boot = matrix(NA,nboot,5)
+for(i in 1:nboot){
+  samp <- sample(1:length(Ci),length(Ci),replace=TRUE) ### sample 
+  out <- suppressWarnings(optim(fit$par,lnLike,Ao=Ao[samp],Ci=Ci[samp])) ### fit sample 
+  theta.boot[i,] <- out$par  ## save results
+  if(i%%100 == 0) print(i) ## counter. Comment out for knitting
+}
+colnames(theta.boot) = c("Vcmax","K","cp","r","sigma")  
+
 ```
 
 ### Task 1: Create `newdata`
@@ -103,7 +169,7 @@ CI = apply(Aconf,2,quantile, c(0.1,0.9))
 ```
 
 * Calculate a 95% interval for both the CI and PI
-* Add these lines to the plot you made in Lab 6 Question 5 (data + best fit line)
+* Add these lines to the plot you made in Lab 10 Question 5 (data + best fit line)
 * Now your plot should have the data, a best fit line, the CI and the PI
 * Make sure to use different colors and/or line types and to include a legend
 
