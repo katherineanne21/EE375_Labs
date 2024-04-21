@@ -114,6 +114,11 @@ colnames(theta.boot) = c("Vcmax","K","cp","r","sigma")
 
 Our first goal is to draw a CI and PI around the model prediction curve. Similar to when we use `predict` with a lm or glm, when we make predictions using Monte Carlo methods we need to define the set of new X's we want to make predictions for, so we will need to define `newdata` as sequence of values along the X-axis.
 
+```{r}
+newdata = Ci
+```
+
+
 
 # Monte Carlo Uncertainty Propagation
 
@@ -127,9 +132,21 @@ Apred = matrix(NA,Nmc,length(newdata)) # Storage for predicted A; row=iteration,
 Tpred = matrix(NA,Nmc,5)               # Storage for parameters (theta) associated with predictions
 for(i in 1:Nmc){
     ## sample inputs
-
+    Tpred[i,] = theta.boot[sample.int(nrow(theta.boot), 5000 ), ]
+  
     ## calculate (and save) predictions
 
+    nboot = 2000
+    n = length(Ci)
+    theta = fit$par
+    theta.boot = matrix(NA,nboot,5)
+    for(i in 1:nboot){
+      Ciboot <- runif(n,0,700)
+      Aboot <- rnorm(n,FvCB(theta,Ciboot), theta[5])
+      out <- suppressWarnings(optim(fit$par, lnLike, Ao = Aboot, Ci = Ciboot))
+      theta.boot[i, ] <- out$par
+    }
+    colnames(theta.boot) = c("Vcmax","K","cp","r","sigma")
 }
 ```
 
