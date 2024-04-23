@@ -106,7 +106,7 @@ for(i in 1:nboot){
   theta.boot[i,] <- out$par  ## save results
   if(i%%100 == 0) print(i) ## counter. Comment out for knitting
 }
-colnames(theta.boot) = c("Vcmax","K","cp","r","sigma")  
+colnames(theta.boot) = c("Vcmax","K","cp","r","sigma")    
 
 ```
 
@@ -115,7 +115,7 @@ colnames(theta.boot) = c("Vcmax","K","cp","r","sigma")
 Our first goal is to draw a CI and PI around the model prediction curve. Similar to when we use `predict` with a lm or glm, when we make predictions using Monte Carlo methods we need to define the set of new X's we want to make predictions for, so we will need to define `newdata` as sequence of values along the X-axis.
 
 ```{r}
-newdata = Ci
+newdata = data.frame(Ci = seq(min(Ci),max(Ci),length.out = 100))
 ```
 
 
@@ -127,26 +127,15 @@ Below is the initial stub of code to perform Monte Carlo uncertainty propagation
 ```{r}
 ## Monte Carlo uncertainty analysis
 Nmc = 5000	#number of MC iterations
-Aconf = matrix(NA,Nmc,length(newdata)) # Storage for predicted means for A; row=iteration, col=X's
-Apred = matrix(NA,Nmc,length(newdata)) # Storage for predicted A; row=iteration, col=X's
+Aconf = matrix(NA,Nmc,length(newdata$Ci)) # Storage for predicted means for A; row=iteration, col=X's
+Apred = matrix(NA,Nmc,length(newdata$Ci)) # Storage for predicted A; row=iteration, col=X's
 Tpred = matrix(NA,Nmc,5)               # Storage for parameters (theta) associated with predictions
 for(i in 1:Nmc){
     ## sample inputs
-    Tpred[i,] = theta.boot[sample.int(nrow(theta.boot), 5000 ), ]
+    Tpred[i,] = theta.boot[sample.int(nrow(theta.boot), 1), ]
   
-    ## calculate (and save) predictions
-
-    nboot = 2000
-    n = length(Ci)
-    theta = fit$par
-    theta.boot = matrix(NA,nboot,5)
-    for(i in 1:nboot){
-      Ciboot <- runif(n,0,700)
-      Aboot <- rnorm(n,FvCB(theta,Ciboot), theta[5])
-      out <- suppressWarnings(optim(fit$par, lnLike, Ao = Aboot, Ci = Ciboot))
-      theta.boot[i, ] <- out$par
-    }
-    colnames(theta.boot) = c("Vcmax","K","cp","r","sigma")
+    Aconf[i,] = FvCB(Tpred[i,], newdata$Ci)
+    Apred[i,] = rnorm(nrow(newdata),Aconf[i,],Tpred[i,5]) 
 }
 ```
 
@@ -182,7 +171,19 @@ At this point you should be able to assemble and run your Monte Carlo loop.
 With the MC simulations completed, our next step is to use `apply` to summarize the results in terms of the CI and PI. As an example, the following code calculates a 80% Confidence interval. We want to do the apply BY COLUMN because each column represents a different X value of the `newdata` sequence that we created. At each point along the sequence we want to calculate both a CI and PI. 
 
 ```{r}
-CI = apply(Aconf,2,quantile, c(0.1,0.9))
+CI = apply(Aconf,2,quantile, c(0.025,0.975))
+PI = apply(Apred,2,quantile, c(0.025,0.975))
+
+plot(Ci,Ao)
+lines(newdata$Ci,FvCB(fit$par, Ci = newdata$Ci))
+
+lines(newdata$Ci,CI[1,],col="blue")
+lines(newdata$Ci,CI[2,],col="blue")
+lines(newdata$Ci,PI[1,],col="green")
+lines(newdata$Ci,PI[2,],col="green")
+
+legend("bottomright", legend = c("Fit Line", "Confidence Intervals", "Prediction Intervals"),
+       col = c("black", "blue", "green"), lty = c(1, 2, 3))
 ```
 
 * Calculate a 95% interval for both the CI and PI
@@ -192,9 +193,9 @@ CI = apply(Aconf,2,quantile, c(0.1,0.9))
 
 In addition to calculating intervals, we can look at the full predictive distribution at any point, as well as the distribution of expected values (i.e. means)
 ```{r}
-j = findInterval(400,newdata) ## Find the Ci value in newdata closest to 400 ppm
+j = findInterval(400,newdata$Ci) ## Find the Ci value in newdata closest to 400 ppm
 plot(density(Aconf[,j]),xlim=range(Apred[,j]),
-     main=paste("Prediction at",round(newdata[j]),"ppm"),
+     main=paste("Prediction at",round(newdata$Ci[j]),"ppm"),
      xlab="Photosynthetic Rate (A)",lwd=3)
 lines(density(Apred[,j]),col="red",lwd=3)
 legend("topright",legend=c("mean","prediction"),col=1:2,lwd=3)
@@ -207,7 +208,7 @@ legend("topright",legend=c("mean","prediction"),col=1:2,lwd=3)
 The next thing we're going to do is to use the outputs of our Monte Carlo analysis to look at how sensitive our predictions are to the different parameters in the model. This sensitivity will change for different values of Ci, so we're going to start by looking at the sensitivity at a specific value. First we choose the value of Ci in `newdata` that's closest to 400 ppm.
 
 ```{r}
-j = findInterval(400,newdata) ## Find the Ci value closest to 400 ppm
+j = findInterval(400,newdata$Ci) ## Find the Ci value closest to 400 ppm
 
 sens_j = as.data.frame(matrix(NA,5,3)) ## create a DF to save results
 colnames(sens_j) = c("slope","linR2","trendR2")
@@ -241,10 +242,28 @@ sens_j
 Given what you see in the sensitivity plots and the resulting statistics based on the regression and trend lines calculated for each plot, answer the following questions:
 
 * Which parameters causes photosynthetic rate to increase? Which cause it to decrease?
+
+Increase: Vcmax, K, cp
+Decrease: r, sigma
+
 * Are any of the responses nonlinear? If so, which ones and describe the pattern. 
+
+Vcmax and K are the most nonlinear. Both start out low and gradually increase. 
+
 * Which parameter is photosynthetic rate the most sensitive to in absolute terms? Which the least?
+
+Most sensitive: Vcmax
+Least sensitive: r
+
 * In terms of partitioning out the variability in the confidence interval, which parameters have the most impact? Which are not worth worrying about?
+
+Most impact: Vcmax
+Not worth worrying about: definitely sigma, maybe r
+
 * How much of the variability in the confidence interval is not explained by the direct effects of each parameter by itself? What accounts for the remaining variability and how might we quantify that effect?
+
+Roughly 16% is not explained by the parameters. We are missing the interaction between terms and could take into account a covariance matrix.
+
 
 ## Task 6: varying sensitivities (Extra Credit)
 
