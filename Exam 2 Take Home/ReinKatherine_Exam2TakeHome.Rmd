@@ -8,6 +8,16 @@ date: "2024-04-24"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Units
+
+tot_energyconsump = quad Btu
+energyconsump_percap = MMBtu/person
+energyintensity = 1000 Btu/2015$ GDP PPP
+GDP = Billion 2015$ PPP
+CO2 = MMtonnes CO2
+pop = Mperson
+
+
 ## Import Packages
 
 ```{r}
@@ -31,19 +41,65 @@ data_pop <- read_excel("exam2data_fall22.xlsx", sheet = "population", na = "--")
 ## Cleaning Data
 
 ```{r}
-# Select 2019 from each sheet and add to a new data frame
+# Select 2015 from each sheet and add to a new data frame
 data = data.frame(matrix(nrow=231,ncol=0))
-data$Year = data_pop$...2
-data$tot_energyconsump = data_tot_energyconsump$"2019"
-data$energyconsump_percap = data_energyconsump_percap$"2019"
-data$energyintensity = data_energyintensity$"2019"
-data$GDP = data_GDP$"2019"
-data$CO2 = data_CO2$"2019"
-data$pop = data_pop$"2019"
+data$tot_energyconsump = data_tot_energyconsump$"2015"
+data$energyconsump_percap = data_energyconsump_percap$"2015"
+data$energyintensity = data_energyintensity$"2015"
+data$GDP = data_GDP$"2015"
+data$CO2 = data_CO2$"2015"
+data$pop = data_pop$"2015"
+
+# Set Row Names
+row.names(data) <- data_pop$...2
 
 # Remove World row
 data = data[-1, ]
+
+# Replace more NAs
+data[data == 0] <- NA
+data[data == "NA"] <- NA
+
+# Make sure values are numeric
+data$energyconsump_percap = as.numeric(data$energyconsump_percap)
+data$energyintensity = as.numeric(data$energyintensity)
+data$GDP = as.numeric(data$GDP)
+data$pop = as.numeric(data$pop)
 ```
+
+## Check for Colinearity
+
+```{r}
+# Create pairs plot and correlation values
+pairs(data)
+cor(data, use = "pairwise.complete.obs")
+```
+
+## Create Scatter Plots
+
+```{r}
+
+```
+
+## Calculate New Variables
+
+```{r}
+# Per capita income (GDP/person)
+# Multiply GDP by 1B as it's given in billions
+# Multiply pop by 1M as it's given in millions
+data$pc_income = (data$GDP * 1000000000) / (data$pop * 1000000)
+
+# Energy Intensity (BTU/$ GDP)
+# Divide by 1000 to remove 1000 BTU
+data$energyintensity = data$energyintensity / 1000
+
+# Carbon Intensity (CO2/BTU)
+# Currently in units of MMtonnes CO2 / quad Btu
+data$carbonintensity = data$CO2 / data$tot_energyconsump
+```
+
+
+
 
 
 
