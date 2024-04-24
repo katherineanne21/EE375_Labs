@@ -8,3 +8,43 @@ date: "2024-04-24"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Import Packages
+
+```{r}
+install.packages("readxl")
+library("readxl")
+```
+
+
+## Import Data
+
+```{r}
+# Read in the files
+data_tot_energyconsump <- read_excel("exam2data_fall22.xlsx", sheet = "total energy consumption", na = "--")
+data_energyconsump_percap <- read_excel("exam2data_fall22.xlsx", sheet = "energy consumption per capita", na = "--")
+data_energyintensity <- read_excel("exam2data_fall22.xlsx", sheet = "Energy$(Energy intensity)", na = "--")
+data_GDP <- read_excel("exam2data_fall22.xlsx", sheet = "GDP", na = "--")
+data_CO2 <- read_excel("exam2data_fall22.xlsx", sheet = "CO2emissions", na = "--")
+data_pop <- read_excel("exam2data_fall22.xlsx", sheet = "population", na = "--")
+```
+
+## Cleaning Data
+
+```{r}
+# Select 2019 from each sheet and add to a new data frame
+data = data.frame(matrix(nrow=231,ncol=0))
+data$Year = data_pop$...2
+data$tot_energyconsump = data_tot_energyconsump$"2019"
+data$energyconsump_percap = data_energyconsump_percap$"2019"
+data$energyintensity = data_energyintensity$"2019"
+data$GDP = data_GDP$"2019"
+data$CO2 = data_CO2$"2019"
+data$pop = data_pop$"2019"
+
+# Remove World row
+data = data[-1, ]
+```
+
+
+
+
