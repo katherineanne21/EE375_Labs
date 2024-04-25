@@ -98,6 +98,58 @@ data$energyintensity = data$energyintensity / 1000
 data$carbonintensity = data$CO2 / data$tot_energyconsump
 ```
 
+# Total Emissions Models
+
+```{r}
+# Model including only total emissions and per capita income (EKC)
+# added in quadratic using https://www.spsanderson.com/steveondata/posts/2023-11-17/index.html
+fit_totem_pcinc_EKC = lm(CO2 ~ I(pc_income^2), data)
+summary(fit_totem_pcinc_EKC)
+our_aic = AIC(fit_totem_pcinc_EKC)
+print(our_aic)
+
+# Linear Model
+fit_totem_pcinc = lm(CO2 ~ pc_income, data)
+summary(fit_totem_pcinc)
+our_aic = AIC(fit_totem_pcinc)
+print(our_aic)
+
+# Polynomial Model
+fit_totem_pcinc_GDP_totengcon = lm(CO2 ~ I(pc_income^2) + GDP + tot_energyconsump, data)
+summary(fit_totem_pcinc_GDP_totengcon)
+our_aic = AIC(fit_totem_pcinc_GDP_totengcon)
+print(our_aic)
+
+# IPAT
+fit_IPAT = lm(CO2 ~ pop * pc_income * carbonintensity, data)
+summary(fit_IPAT)
+our_aic = AIC(fit_IPAT)
+print(our_aic)
+
+```
+
+# Energy Intensity Models
+
+```{r}
+# Model including only total emissions and per capita income (EKC)
+# added in quadratic using https://www.spsanderson.com/steveondata/posts/2023-11-17/index.html
+fit_ei_pcinc_EKC = lm(energyintensity ~ I(pc_income^2), data)
+summary(fit_ei_pcinc_EKC)
+our_aic = AIC(fit_ei_pcinc_EKC)
+print(our_aic)
+
+# Linear Model
+fit_ei_pcinc = lm(energyintensity ~ pc_income, data)
+summary(fit_ei_pcinc)
+our_aic = AIC(fit_ei_pcinc)
+print(our_aic)
+
+# Polynomial Model
+fit_ei_pcinc_GDP_totengcon = lm(energyintensity ~ I(pc_income^2) + GDP + tot_energyconsump, data)
+summary(fit_ei_pcinc_GDP_totengcon)
+our_aic = AIC(fit_ei_pcinc_GDP_totengcon)
+print(our_aic)
+```
 
 
 
