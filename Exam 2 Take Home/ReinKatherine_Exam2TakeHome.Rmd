@@ -21,8 +21,10 @@ pop = Mperson
 ## Import Packages
 
 ```{r}
-install.packages("readxl")
+install.packages("readxl", repos = "http://cran.us.r-project.org")
+install.packages("plotrix", repos = "http://cran.us.r-project.org")
 library("readxl")
+library(plotrix)
 ```
 
 
@@ -60,6 +62,10 @@ data = data[-1, ]
 data[data == 0] <- NA
 data[data == "NA"] <- NA
 
+# Create a Row Names vector
+
+RowNames = row.names(data)
+
 # Make sure values are numeric
 data$energyconsump_percap = as.numeric(data$energyconsump_percap)
 data$energyintensity = as.numeric(data$energyintensity)
@@ -67,19 +73,6 @@ data$GDP = as.numeric(data$GDP)
 data$pop = as.numeric(data$pop)
 ```
 
-## Check for Colinearity
-
-```{r}
-# Create pairs plot and correlation values
-pairs(data)
-cor(data, use = "pairwise.complete.obs")
-```
-
-## Create Scatter Plots
-
-```{r}
-
-```
 
 ## Calculate New Variables
 
@@ -98,15 +91,44 @@ data$energyintensity = data$energyintensity / 1000
 data$carbonintensity = data$CO2 / data$tot_energyconsump
 ```
 
+## Check for Colinearity
+
+```{r}
+# Create pairs plot and correlation values
+pairs(data)
+cor(data, use = "pairwise.complete.obs")
+```
+
+## Create Scatter Plots
+
+```{r}
+# EKC plot
+row.names(data) <- 1:230
+zoomed.data = data[-c(41,220),]
+plot(zoomed.data$pc_income, zoomed.data$CO2, xlab = "Income", ylab = "CO2", main = "EKC Correlation")
+
+# Reset row names
+row.names(data) <- RowNames
+
+# Remove NAs
+data = na.omit(data[])
+```
+
 # Total Emissions Models
 
 ```{r}
 # Model including only total emissions and per capita income (EKC)
 # added in quadratic using https://www.spsanderson.com/steveondata/posts/2023-11-17/index.html
-fit_totem_pcinc_EKC = lm(CO2 ~ I(pc_income^2), data)
+# add in quadratic by squaring the pc_income column
+data$pc_income_sq = -(data$pc_income^2)
+
+fit_totem_pcinc_EKC = lm(CO2 ~ pc_income + pc_income_sq, data)
 summary(fit_totem_pcinc_EKC)
 our_aic = AIC(fit_totem_pcinc_EKC)
 print(our_aic)
+
+plot(predict(fit_totem_pcinc_EKC),data$CO2, pch = 19, cex = 0.7, xlab = "Predicted Values", ylab = "Observed Values", main = "Observed vs. Predicted Total Emissions (EKC)")
+abline(a = 0, b = 1, col = "red")
 
 # Linear Model
 fit_totem_pcinc = lm(CO2 ~ pc_income, data)
@@ -114,17 +136,26 @@ summary(fit_totem_pcinc)
 our_aic = AIC(fit_totem_pcinc)
 print(our_aic)
 
+plot(predict(fit_totem_pcinc),data$CO2, pch = 19, cex = 0.7, xlab = "Predicted Values", ylab = "Observed Values", main = "Observed vs. Predicted Total Emissions (Linear Model)")
+abline(a = 0, b = 1, col = "red")
+
 # Polynomial Model
-fit_totem_pcinc_GDP_totengcon = lm(CO2 ~ I(pc_income^2) + GDP + tot_energyconsump, data)
-summary(fit_totem_pcinc_GDP_totengcon)
-our_aic = AIC(fit_totem_pcinc_GDP_totengcon)
+fit_totem_poly = lm(CO2 ~ I(pc_income) + I(pc_income^2) + I(pc_income^3), data)
+summary(fit_totem_poly)
+our_aic = AIC(fit_totem_poly)
 print(our_aic)
+
+plot(predict(fit_totem_poly),data$CO2, pch = 19, cex = 0.7, xlab = "Predicted Values", ylab = "Observed Values", main = "Observed vs. Predicted Total Emissions (Polynomial Model)")
+abline(a = 0, b = 1, col = "red")
 
 # IPAT
 fit_IPAT = lm(CO2 ~ pop * pc_income * carbonintensity, data)
 summary(fit_IPAT)
 our_aic = AIC(fit_IPAT)
 print(our_aic)
+
+plot(predict(fit_IPAT),data$CO2, pch = 19, cex = 0.7, xlab = "Predicted Values", ylab = "Observed Values", main = "Observed vs. Predicted Total Emissions (IPAT Model)")
+abline(a = 0, b = 1, col = "red")
 
 ```
 
@@ -133,10 +164,13 @@ print(our_aic)
 ```{r}
 # Model including only total emissions and per capita income (EKC)
 # added in quadratic using https://www.spsanderson.com/steveondata/posts/2023-11-17/index.html
-fit_ei_pcinc_EKC = lm(energyintensity ~ I(pc_income^2), data)
+fit_ei_pcinc_EKC = lm(energyintensity ~ pc_income_sq, data)
 summary(fit_ei_pcinc_EKC)
 our_aic = AIC(fit_ei_pcinc_EKC)
 print(our_aic)
+
+plot(predict(fit_ei_pcinc_EKC),data$energyintensity, pch = 19, cex = 0.7, xlab = "Predicted Values", ylab = "Observed Values", main = "Observed vs. Predicted Energy Intensity (EKC)")
+abline(a = 0, b = 1, col = "red")
 
 # Linear Model
 fit_ei_pcinc = lm(energyintensity ~ pc_income, data)
@@ -144,15 +178,50 @@ summary(fit_ei_pcinc)
 our_aic = AIC(fit_ei_pcinc)
 print(our_aic)
 
+plot(predict(fit_ei_pcinc),data$energyintensity, pch = 19, cex = 0.7, xlab = "Predicted Values", ylab = "Observed Values", main = "Observed vs. Predicted Energy Intensity (Linear Model)")
+abline(a = 0, b = 1, col = "red")
+
 # Polynomial Model
-fit_ei_pcinc_GDP_totengcon = lm(energyintensity ~ I(pc_income^2) + GDP + tot_energyconsump, data)
-summary(fit_ei_pcinc_GDP_totengcon)
-our_aic = AIC(fit_ei_pcinc_GDP_totengcon)
+fit_ei_poly = lm(energyintensity ~ I(pc_income) + I(pc_income^2) + I(pc_income^3), data)
+summary(fit_ei_poly)
+our_aic = AIC(fit_ei_poly)
 print(our_aic)
+
+plot(predict(fit_ei_poly),data$energyintensity, pch = 19, cex = 0.7, xlab = "Predicted Values", ylab = "Observed Values", main = "Observed vs. Predicted Energy Intensity (Polynomial Model)")
+abline(a = 0, b = 1, col = "red")
 ```
 
+# Carbon Intensity Models
 
+```{r}
+# Model including only total emissions and per capita income (EKC)
+# added in quadratic using https://www.spsanderson.com/steveondata/posts/2023-11-17/index.html
+fit_ci_pcinc_EKC = lm(carbonintensity ~ pc_income_sq, data)
+summary(fit_ci_pcinc_EKC)
+our_aic = AIC(fit_ci_pcinc_EKC)
+print(our_aic)
 
+plot(predict(fit_ci_pcinc_EKC),data$carbonintensity, pch = 19, cex = 0.7, xlab = "Predicted Values", ylab = "Observed Values", main = "Observed vs. Predicted Carbon Intensity (EKC)")
+abline(a = 0, b = 1, col = "red")
+
+# Linear Model
+fit_ci_pcinc = lm(carbonintensity ~ pc_income, data)
+summary(fit_ci_pcinc)
+our_aic = AIC(fit_ci_pcinc)
+print(our_aic)
+
+plot(predict(fit_ci_pcinc),data$carbonintensity, pch = 19, cex = 0.7, xlab = "Predicted Values", ylab = "Observed Values", main = "Observed vs. Predicted Carbon Intensity (Linear Model)")
+abline(a = 0, b = 1, col = "red")
+
+# Polynomial Model
+fit_ci_poly = lm(carbonintensity ~ I(pc_income) + I(pc_income^2) + I(pc_income^3), data)
+summary(fit_ci_poly)
+our_aic = AIC(fit_ci_poly)
+print(our_aic)
+
+plot(predict(fit_ci_poly),data$carbonintensity, pch = 19, cex = 0.7, xlab = "Predicted Values", ylab = "Observed Values", main = "Observed vs. Predicted Carbon Intensity (Polynomial Model)")
+abline(a = 0, b = 1, col = "red")
+```
 
 
 
