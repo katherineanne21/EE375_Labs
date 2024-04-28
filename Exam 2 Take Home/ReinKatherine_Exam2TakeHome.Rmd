@@ -104,8 +104,10 @@ cor(data, use = "pairwise.complete.obs")
 ```{r}
 # EKC plot
 row.names(data) <- 1:230
-zoomed.data = data[-c(41,220),]
-plot(zoomed.data$pc_income, zoomed.data$CO2, xlab = "Income", ylab = "CO2", main = "EKC Correlation")
+zoomed.data <- data[data$CO2 < 400,]
+plot(zoomed.data$pc_income, zoomed.data$CO2, xlab = "Income ($)", ylab = "CO2 (MMtonnes)", main = "EKC Correlation")
+abline(a = 0, b = 1, col = "red")
+legend("topright", legend = "1:1 Line", col = "red", lty = 1)
 
 # Reset row names
 row.names(data) <- RowNames
